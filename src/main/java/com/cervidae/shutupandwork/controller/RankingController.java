@@ -29,8 +29,8 @@ public class RankingController {
     /**
      * Forced to pull latest rankings from database, ignore caches
      * Use parameter: 'forced'
-     * @param top
-     * @return
+     * @param top length of the rankings
+     * @return ranking
      */
     @GetMapping(value = "rankings", params = {"top", "forced"})
     public Ranking getForcedRanking(int top) {
