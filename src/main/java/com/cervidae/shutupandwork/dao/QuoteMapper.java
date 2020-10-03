@@ -14,6 +14,7 @@ public interface QuoteMapper {
             "WHERE id=#{id}")
     Quote getQuoteByID(@Param("id") long id);
 
+    // WIP: not ready for use
     @Select("SELECT * FROM QUOTE " +
             "WHERE id=#{id}")
     Quote[] getQuoteMultiple();

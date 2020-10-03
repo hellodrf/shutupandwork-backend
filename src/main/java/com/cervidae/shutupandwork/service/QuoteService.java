@@ -17,11 +17,17 @@ public class QuoteService {
         this.quoteMapper = quoteMapper;
     }
 
+    /**
+     * Get multiple random and unique quotes
+     * May add redis cache later.
+     * @param count number of quotes to get
+     * @return list of quotes
+     */
     public List<Quote> getRandomQuotes(int count) {
         List<Quote> quotes = new ArrayList<>();
         for (int i=0; i<count; i++) {
             Quote next = null;
-            while (next==null||quotes.contains(next)){
+            while (next==null||quotes.contains(next)) {
                 next = quoteMapper.getRandomQuote();
             }
             quotes.add(next);

@@ -15,18 +15,29 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Get a user by username.
+     * @param username target's username
+     * @return required user
+     */
     @GetMapping(value="user", params = {"username"})
     public User getByUsername(@RequestParam String username) {
         return userService.getByUsername(username);
     }
 
+    /**
+     * Update a user's data. If user do not exist, add it to the database.
+     * @param username target's username
+     * @param score target's score
+     * @return required user
+     */
     @PostMapping(value="user", params = {"username", "score"})
-    public boolean update(@RequestParam String username, @RequestParam String score) {
+    public boolean update(@RequestParam String username, @RequestParam int score) {
         if (getByUsername(username)==null) {
             return userService.add(username, score);
         }
         else {
-            return false;
+            return userService.update(username, score);
         }
     }
 }
