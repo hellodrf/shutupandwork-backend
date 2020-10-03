@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan
 @SpringBootApplication
-public class CbookingsApplication {
+public class SUAWApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CbookingsApplication.class, args);
+        SpringApplication.run(SUAWApplication.class, args);
     }
 
 }
