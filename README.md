@@ -1,7 +1,7 @@
-# cbooking 在线预约系统
+# Collaborate Promodoro (backend)
 
-SpringBoot+Mybatis+Shiro 试验学习项目
+SpringBoot + Mybatis
 
-仅包括后端，未来可能做一个Vue前端
+Front end written in Swift (iOS), repository currently not avalible to public
 
 ## Just poking around
