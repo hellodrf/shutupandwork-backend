@@ -1,4 +1,4 @@
-package com.cervidae.cbookings;
+package com.cervidae.shutupandwork;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
