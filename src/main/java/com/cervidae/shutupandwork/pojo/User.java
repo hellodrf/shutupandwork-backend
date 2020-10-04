@@ -13,12 +13,12 @@ public class User {
 
     private int score;
 
-    private long updated; // Unix timestamp*1000 (1000=1s), from System.currentTimeMillis
+    private long updated; // Unix timestamp (1s = 1)
 
     /**
      * Overriding lombok to convert MySQL datetime to Unix timestamp
      */
     public void setUpdated(Date updated) {
-        this.updated = updated.getTime() / 1000;
+        this.updated = updated.getTime()/1000;
     }
 }

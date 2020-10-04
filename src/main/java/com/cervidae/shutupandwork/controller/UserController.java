@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("users")
 public class UserController {
 
     private final UserService userService;
@@ -20,7 +21,7 @@ public class UserController {
      * @param username target's username
      * @return required user
      */
-    @GetMapping(value="user", params = {"username"})
+    @GetMapping(params = {"username"})
     public User getByUsername(@RequestParam String username) {
         return userService.getByUsername(username);
     }
@@ -31,7 +32,7 @@ public class UserController {
      * @param score target's score
      * @return required user
      */
-    @PostMapping(value="user", params = {"username", "score"})
+    @PostMapping(params = {"username", "score"})
     public boolean update(@RequestParam String username, @RequestParam int score) {
         if (getByUsername(username)==null) {
             return userService.add(username, score);

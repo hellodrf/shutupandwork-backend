@@ -4,9 +4,11 @@ import com.cervidae.shutupandwork.pojo.Ranking;
 import com.cervidae.shutupandwork.service.RankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("rankings")
 public class RankingController {
 
     final RankingService rankingService;
@@ -21,7 +23,7 @@ public class RankingController {
      * @param top length of the rankings
      * @return ranking
      */
-    @GetMapping(value = "rankings", params = {"top"})
+    @GetMapping(params = {"top"})
     public Ranking getRanking(int top) {
         return rankingService.getRankings(top);
     }
@@ -32,7 +34,7 @@ public class RankingController {
      * @param top length of the rankings
      * @return ranking
      */
-    @GetMapping(value = "rankings", params = {"top", "forced"})
+    @GetMapping(params = {"top", "forced"})
     public Ranking getForcedRanking(int top) {
         return rankingService.getLatestRankings(top);
     }

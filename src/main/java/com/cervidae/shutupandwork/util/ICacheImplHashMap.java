@@ -1,12 +1,14 @@
 package com.cervidae.shutupandwork.util;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Scope("prototype")
 @Primary
 public class ICacheImplHashMap<K, V> implements ICache<K, V>{
 
@@ -61,7 +63,7 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
      * @return a boolean signifies if the action is successful
      */
     @Override
-    public boolean remove(K key) {
+    public boolean drop(K key) {
         return cacheMap.remove(key) != null;
     }
 }

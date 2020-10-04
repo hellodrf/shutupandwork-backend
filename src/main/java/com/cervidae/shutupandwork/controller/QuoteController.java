@@ -4,12 +4,14 @@ import com.cervidae.shutupandwork.pojo.Quote;
 import com.cervidae.shutupandwork.service.QuoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("quotes")
 public class QuoteController {
 
     private final QuoteService quoteService;
@@ -19,12 +21,12 @@ public class QuoteController {
         this.quoteService = quoteService;
     }
 
-    @GetMapping(value = "quotes")
+    @GetMapping
     public Quote getQuote() {
         return quoteService.getRandomQuotes(1).get(0);
     }
 
-    @GetMapping(value = "quotes", params = {"count"})
+    @GetMapping(params = {"count"})
     public List<Quote> getMultipleQuotes(@RequestParam int count) {
         return quoteService.getRandomQuotes(count);
     }

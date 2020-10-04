@@ -35,6 +35,6 @@ public interface ICache<K, V> {
      * @param key key of the cache
      * @return a boolean signifies if the action is successful
      */
-    boolean remove(K key);
+    boolean drop(K key);
 
 }

@@ -12,14 +12,14 @@ public class Ranking {
 
     private int top;
 
-    private long timeGenerated; // Unix timestamp*1000 (1000=1s), from System.currentTimeMillis
+    private long timeGenerated; // Unix timestamp (1s = 1)
 
     /**
      * Pack SQL result (array of users) into a ranking object
      * @param users all users on the ranking
      */
     public Ranking(User[] users) {
-        this.timeGenerated = System.currentTimeMillis();
+        this.timeGenerated = System.currentTimeMillis()/1000;
         this.top = users.length;
         this.rankMap = new HashMap<>();
         for (int i = 0; i < top; i++) {
@@ -28,6 +28,6 @@ public class Ranking {
     }
 
     public boolean isExpired(long expiry) {
-        return (System.currentTimeMillis()-this.getTimeGenerated()) >= expiry;
+        return (System.currentTimeMillis()/1000 - this.getTimeGenerated()) >= expiry;
     }
 }
