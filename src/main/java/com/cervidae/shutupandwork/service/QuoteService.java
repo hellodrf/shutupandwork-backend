@@ -34,4 +34,8 @@ public class QuoteService {
         }
         return quotes;
     }
+
+    public boolean addQuote(String quote, int type) {
+        return quoteMapper.addQuote(quote, type);
+    }
 }
