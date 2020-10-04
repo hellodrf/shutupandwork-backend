@@ -2,9 +2,13 @@
 
 ### Dependencies:
 Maven
+
 SpringBoot
+
 Mybatis
+
 Lombok
+
 
 App written in Swift (iOS), repository currently not avalible to public
 
