@@ -12,10 +12,10 @@ public class Ranking {
 
     private int top;
 
-    private long timeGenerated; // Unix timestamp*1000 (1000=1s), from currentTimeMillis
+    private long timeGenerated; // Unix timestamp*1000 (1000=1s), from System.currentTimeMillis
 
     /**
-     * Pack SQL result (array of users) into ranking object
+     * Pack SQL result (array of users) into a ranking object
      * @param users all users on the ranking
      */
     public Ranking(User[] users) {

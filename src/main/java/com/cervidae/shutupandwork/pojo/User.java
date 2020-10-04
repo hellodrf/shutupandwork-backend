@@ -13,7 +13,7 @@ public class User {
 
     private int score;
 
-    private long updated; // Unix timestamp*1000 (1000=1s), from currentTimeMillis
+    private long updated; // Unix timestamp*1000 (1000=1s), from System.currentTimeMillis
 
     /**
      * Overriding lombok to convert MySQL datetime to Unix timestamp
