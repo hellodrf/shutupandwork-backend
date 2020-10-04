@@ -3,22 +3,21 @@ package com.cervidae.shutupandwork.service;
 import com.cervidae.shutupandwork.dao.RankingMapper;
 import com.cervidae.shutupandwork.pojo.Ranking;
 import com.cervidae.shutupandwork.util.Constants;
+import com.cervidae.shutupandwork.util.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class RankingService {
 
     final RankingMapper rankingMapper;
 
-    private final Map<Integer, Ranking> rankingCache = new HashMap<>();
+    final ICache<Integer, Ranking> iCache;
 
     @Autowired
-    public RankingService(RankingMapper rankingMapper) {
+    public RankingService(RankingMapper rankingMapper, ICache<Integer, Ranking> iCache) {
         this.rankingMapper = rankingMapper;
+        this.iCache = iCache;
     }
 
     /**
@@ -27,10 +26,14 @@ public class RankingService {
      * @return ranking
      */
     public Ranking getRankings(int top) {
-        if (!rankingCache.containsKey(top) || rankingCache.get(top).isExpired(Constants.rankingCacheExpiry)) {
-            getLatestRankings(top);
+        Ranking cache = iCache.select(top);
+        if (cache == null || cache.isExpired(Constants.rankingCacheExpiry)) {
+            Ranking latest = getLatestRankings(top);
+            iCache.insert(top, latest);
+            return latest;
+        } else {
+            return cache;
         }
-        return rankingCache.get(top);
     }
 
     /**
@@ -39,8 +42,6 @@ public class RankingService {
      * @return ranking
      */
     public Ranking getLatestRankings(int top) {
-        Ranking ranking = new Ranking(rankingMapper.getRankings(top));
-        rankingCache.put(top, ranking);
-        return ranking;
+        return new Ranking(rankingMapper.getRankings(top));
     }
 }

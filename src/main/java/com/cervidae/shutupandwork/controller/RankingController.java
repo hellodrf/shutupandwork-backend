@@ -36,4 +36,5 @@ public class RankingController {
     public Ranking getForcedRanking(int top) {
         return rankingService.getLatestRankings(top);
     }
+
 }
