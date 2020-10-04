@@ -1,4 +1,4 @@
-create table User
+create table USER
 (
 	id int auto_increment
 		primary key,
@@ -15,7 +15,7 @@ create index id_score_index
 create index score_index
 	on User (score);
 
-create table Quote
+create table QUOTE
 (
     id int auto_increment
         primary key,
