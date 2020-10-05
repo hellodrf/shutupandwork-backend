@@ -29,7 +29,7 @@ public class RankingService {
         Ranking cache = iCache.select(top);
         if (cache == null || cache.isExpired(Constants.rankingCacheExpiry)) {
             Ranking latest = getLatestRankings(top);
-            iCache.insert(top, latest);
+            iCache.insertOrUpdate(top, latest);
             return latest;
         } else {
             return cache;

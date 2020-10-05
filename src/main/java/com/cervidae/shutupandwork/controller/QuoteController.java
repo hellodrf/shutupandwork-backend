@@ -2,7 +2,9 @@ package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.pojo.Quote;
 import com.cervidae.shutupandwork.service.QuoteService;
+import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,17 +21,20 @@ public class QuoteController {
     }
 
     @GetMapping
-    public Quote getQuote() {
-        return quoteService.getRandomQuotes(1).get(0);
+    public Response<Quote> getQuote() {
+        Quote quote = quoteService.getRandomQuotes(1).get(0);
+        return Response.success(quote);
     }
 
     @GetMapping(params = {"count"})
-    public List<Quote> getMultipleQuotes(@RequestParam int count) {
-        return quoteService.getRandomQuotes(count);
+    public Response<List<Quote>> getMultipleQuotes(@RequestParam int count) {
+        List<Quote> quotes = quoteService.getRandomQuotes(count);
+        return Response.success(quotes);
     }
 
     @PostMapping(params = {"quote", "type"})
-    public boolean addQuote(@RequestParam String quote, @RequestParam int type) {
-        return quoteService.addQuote(quote, type);
+    public Response<?> addQuote(@RequestParam String quote, @RequestParam int type) {
+        boolean success = quoteService.addQuote(quote, type);
+        return success ? Response.success() : Response.fail();
     }
 }

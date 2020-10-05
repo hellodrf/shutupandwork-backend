@@ -3,6 +3,7 @@ package com.cervidae.shutupandwork.service;
 import com.cervidae.shutupandwork.dao.QuoteMapper;
 import com.cervidae.shutupandwork.pojo.Quote;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,13 +20,13 @@ public class QuoteService {
 
     /**
      * Get multiple random and unique quotes
-     * May add redis cache later.
      * @param count number of quotes to get
      * @return list of quotes
      */
-    public List<Quote> getRandomQuotes(int count) {
+    public List<Quote> getRandomQuotes(int count) throws DataAccessException {
         List<Quote> quotes = new ArrayList<>();
-        for (int i=0; i<count; i++) {
+        count = Math.min(count, quoteMapper.count());
+        for (int i=0; i < count; i++) {
             Quote next = null;
             while (next==null||quotes.contains(next)) {
                 next = quoteMapper.getRandomQuote();

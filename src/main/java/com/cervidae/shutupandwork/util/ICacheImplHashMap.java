@@ -23,10 +23,16 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
      * if already exists, update it.
      * @param key key of the cache
      * @param value value of the cache
+     * @return a boolean signifies if the action is successful
      */
     @Override
-    public void insert(K key, V value) {
-        cacheMap.put(key, value);
+    public boolean insert(K key, V value) {
+        if (cacheMap.containsKey(key)) {
+            return false;
+        } else {
+            cacheMap.put(key, value);
+            return true;
+        }
     }
 
     /**
@@ -40,7 +46,7 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
     }
 
     /**
-     * a boolean signifies if the action is successful
+     * Update the value if key already exists, then return true.
      * If key not exist, do nothing and return false
      * @param key key of the cache
      * @param value value of the cache
@@ -65,5 +71,26 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
     @Override
     public boolean drop(K key) {
         return cacheMap.remove(key) != null;
+    }
+
+    /**
+     * Insert into the cache if not already exist.
+     * if already exists, update it.
+     * @param key key of the cache
+     * @param value value of the cache
+     */
+    @Override
+    public void insertOrUpdate(K key, V value) {
+        cacheMap.put(key, value);
+    }
+
+    /**
+     * If the cache contains the key, return true.
+     * @param key target key
+     * @return whether the key is in cache
+     */
+    @Override
+    public boolean contains(K key) {
+        return cacheMap.containsKey(key);
     }
 }
