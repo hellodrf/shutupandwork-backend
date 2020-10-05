@@ -39,7 +39,7 @@ public class UserController {
      */
     @PostMapping(params = {"username", "score"})
     public Response<?> addOrUpdate(@RequestParam String username, @RequestParam int score) {
-        if (getByUsername(username)==null) {
+        if (userService.getByUsername(username) == null) {
             userService.add(username, score);
         }
         else {

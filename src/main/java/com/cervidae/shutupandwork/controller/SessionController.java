@@ -39,7 +39,8 @@ public class SessionController {
     }
 
     @PostMapping(params = {"sessionID", "status"})
-    public Response<?> setStatus(Session.Status status) {
-        return sessionService.setStatus(status)? Response.success() : Response.fail();
+    public Response<?> setStatus(String sessionID, Session.Status status) {
+        sessionService.setStatus(sessionID, status);
+        return Response.success();
     }
 }

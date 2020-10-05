@@ -30,6 +30,7 @@ public class SessionService {
             }
         } else {
             session = new Session(user, sessionID);
+            iCache.insert(sessionID, session);
         }
         return session;
     }
@@ -38,7 +39,12 @@ public class SessionService {
         return iCache.select(sessionID);
     }
 
-    public boolean setStatus(Session.Status status) {
-        return true;
+    public void setStatus(String sessionID, Session.Status status) {
+        if (iCache.contains(sessionID)) {
+            Session session = iCache.select(sessionID);
+            session.setStatus(status);
+        } else {
+            throw new IllegalArgumentException("cannot find specified session");
+        }
     }
 }

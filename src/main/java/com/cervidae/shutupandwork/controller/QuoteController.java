@@ -41,6 +41,12 @@ public class QuoteController {
         return Response.success();
     }
 
+    /**
+     * Admin only: delete a quote by id
+     * @param id quote id
+     * @param password admin password, defined in Util.Constants
+     * @return the deleted quote
+     */
     @DeleteMapping(params = {"id", "password"})
     public Response<Quote> deleteQuote(@RequestParam int id, String password) {
         if (!password.equals(Constants.adminPassword)) {
