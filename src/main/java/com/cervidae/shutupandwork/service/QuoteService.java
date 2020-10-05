@@ -36,7 +36,20 @@ public class QuoteService {
         return quotes;
     }
 
-    public boolean addQuote(String quote, int type) {
-        return quoteMapper.addQuote(quote, type);
+    public Quote getQuoteByID(int id) {
+        return quoteMapper.getQuoteByID(id);
+    }
+
+    public void addQuote(String quote, int type) {
+        if (quote.equals("")) {
+            throw new IllegalArgumentException("quote field must not be empty");
+        }
+        quoteMapper.addQuote(quote, type);
+    }
+
+    public Quote deleteQuote(int id) {
+        Quote quote = quoteMapper.getQuoteByID(id);
+        quoteMapper.delete(id);
+        return quote;
     }
 }

@@ -2,9 +2,9 @@ package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.pojo.Quote;
 import com.cervidae.shutupandwork.service.QuoteService;
+import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,9 +32,21 @@ public class QuoteController {
         return Response.success(quotes);
     }
 
-    @PostMapping(params = {"quote", "type"})
-    public Response<?> addQuote(@RequestParam String quote, @RequestParam int type) {
-        boolean success = quoteService.addQuote(quote, type);
-        return success ? Response.success() : Response.fail();
+    @PostMapping(params = {"quote", "type", "password"})
+    public Response<?> addQuote(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
+        if (!password.equals(Constants.adminPassword)) {
+            throw new IllegalArgumentException("incorrect admin password");
+        }
+        quoteService.addQuote(quote, type);
+        return Response.success();
+    }
+
+    @DeleteMapping(params = {"id", "password"})
+    public Response<Quote> deleteQuote(@RequestParam int id, String password) {
+        if (!password.equals(Constants.adminPassword)) {
+            throw new IllegalArgumentException("incorrect admin password");
+        }
+        Quote quote = quoteService.deleteQuote(id);
+        return Response.success(quote);
     }
 }

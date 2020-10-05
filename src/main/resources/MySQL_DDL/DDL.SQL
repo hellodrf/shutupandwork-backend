@@ -10,10 +10,10 @@ create table USER
 );
 
 create index id_score_index
-	on User (score, id);
+	on Users (score, id);
 
 create index score_index
-	on User (score);
+	on Users (score);
 
 create table QUOTE
 (

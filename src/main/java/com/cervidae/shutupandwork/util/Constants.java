@@ -6,4 +6,6 @@ public class Constants {
 
     public static final String adminPassword = "12345";
 
+    public static final String sessionIDRegex = "[0-9]{6}"; // 6 digit number
+
 }

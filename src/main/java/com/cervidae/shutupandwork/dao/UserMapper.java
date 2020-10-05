@@ -18,10 +18,10 @@ public interface UserMapper {
 
     @Insert("INSERT INTO USER " +
             "VALUES (NULL, #{username}, #{score}, NULL)")
-    boolean add(@Param("username") String username, @Param("score") int score);
+    void add(@Param("username") String username, @Param("score") int score);
 
     @Update("UPDATE USER " +
             "SET score=#{score} " +
             "WHERE username=#{username}")
-    boolean update(@Param("username") String username, @Param("score") int score);
+    void update(@Param("username") String username, @Param("score") int score);
 }

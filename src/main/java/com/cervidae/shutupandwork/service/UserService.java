@@ -23,11 +23,11 @@ public class UserService {
         return userMapper.findByID(id);
     }
 
-    public Boolean add(String username, int score) {
-        return userMapper.add(username, score);
+    public void add(String username, int score) {
+        userMapper.add(username, score);
     }
 
-    public Boolean update(String username, int score) {
-        return userMapper.update(username, score);
+    public void update(String username, int score) {
+        userMapper.update(username, score);
     }
 }

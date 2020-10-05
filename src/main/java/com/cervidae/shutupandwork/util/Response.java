@@ -27,6 +27,7 @@ public class Response<T> implements Serializable {
     public static <T> Response<T> success() {
         return new Response<>(null, 1, null);
     }
+
     public static <T> Response<T> success(T content) {
         return new Response<>(content, 1, null);
     }

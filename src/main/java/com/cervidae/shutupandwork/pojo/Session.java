@@ -12,7 +12,7 @@ public class Session {
 
     private String id; // a 6 digit number set by users (-1 means not initialised)
 
-    private Map<String, User> userList;
+    private Map<String, User> userList; // List of all users in ConcurrentHashMap
 
     private Status status;
 
@@ -22,6 +22,7 @@ public class Session {
         this.userList = new ConcurrentHashMap<>();
         this.userList.put(startUser.getUsername(), startUser);
         this.id = id;
+        this.status = Status.WAITING;
     }
 
     public boolean addUser(User user) {

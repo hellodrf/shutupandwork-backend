@@ -2,6 +2,7 @@ package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.service.UserService;
+import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +23,12 @@ public class UserController {
      * @return required user
      */
     @GetMapping(params = {"username"})
-    public User getByUsername(@RequestParam String username) {
-        return userService.getByUsername(username);
+    public Response<User> getByUsername(@RequestParam String username) {
+        User user = userService.getByUsername(username);
+        if (user==null) {
+            throw new IllegalArgumentException("cannot find user in database");
+        }
+        return Response.success(user);
     }
 
     /**
@@ -33,12 +38,13 @@ public class UserController {
      * @return required user
      */
     @PostMapping(params = {"username", "score"})
-    public boolean update(@RequestParam String username, @RequestParam int score) {
+    public Response<?> addOrUpdate(@RequestParam String username, @RequestParam int score) {
         if (getByUsername(username)==null) {
-            return userService.add(username, score);
+            userService.add(username, score);
         }
         else {
-            return userService.update(username, score);
+            userService.update(username, score);
         }
+        return Response.success();
     }
 }
