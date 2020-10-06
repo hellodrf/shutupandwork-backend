@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository("UserMapper")
-public interface UserMapper {
+public interface UserMapper extends IMapper {
 
     @Select("SELECT * FROM USER " +
             "WHERE username=#{username}")

@@ -80,7 +80,7 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
      * @param value value of the cache
      */
     @Override
-    public void insertOrUpdate(K key, V value) {
+    public void put(K key, V value) {
         cacheMap.put(key, value);
     }
 

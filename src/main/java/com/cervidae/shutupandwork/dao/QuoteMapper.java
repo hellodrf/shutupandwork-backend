@@ -6,16 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository("QuoteMapper")
-public interface QuoteMapper {
+public interface QuoteMapper extends IMapper {
 
     @Select("SELECT * FROM QUOTE " +
             "WHERE id=#{id}")
     Quote getQuoteByID(@Param("id") long id);
-
-    // WIP: not ready for use
-    @Select("SELECT * FROM QUOTE " +
-            "WHERE id=#{id}")
-    Quote[] getQuoteMultiple();
 
     @Select("SELECT QUOTE.* FROM QUOTE " +
             "JOIN (SELECT ROUND(RAND()*(SELECT MAX(id) FROM QUOTE)) AS id) AS t2 " +

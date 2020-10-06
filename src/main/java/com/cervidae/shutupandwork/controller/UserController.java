@@ -18,7 +18,8 @@ public class UserController {
     }
 
     /**
-     * Get a user by username.
+     * Get a user by username. (idempotent)
+     * Usage: GET /users?username=your_user_name
      * @param username target's username
      * @return required user
      */
@@ -33,12 +34,14 @@ public class UserController {
 
     /**
      * Update a user's data. If user do not exist, add it to the database.
+     * Idempotent action,
+     * Usage: POST /users?username=your_user_name?score=your_score
      * @param username target's username
      * @param score target's score
      * @return required user
      */
     @PostMapping(params = {"username", "score"})
-    public Response<?> addOrUpdate(@RequestParam String username, @RequestParam int score) {
+    public Response<?> put(@RequestParam String username, @RequestParam int score) {
         if (userService.getByUsername(username) == null) {
             userService.add(username, score);
         }

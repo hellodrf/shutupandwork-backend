@@ -1,10 +1,13 @@
 package com.cervidae.shutupandwork.util;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Response<T> implements Serializable {
 
     public static final long serialVersionUID = 4210673593941538294L;

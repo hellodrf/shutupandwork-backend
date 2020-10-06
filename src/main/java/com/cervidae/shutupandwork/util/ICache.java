@@ -44,7 +44,7 @@ public interface ICache<K, V> {
      * @param key key of the cache
      * @param value value of the cache
      */
-    void insertOrUpdate(K key, V value);
+    void put(K key, V value);
 
     /**
      * If the cache contains the key, return true.

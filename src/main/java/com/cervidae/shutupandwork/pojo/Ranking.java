@@ -1,6 +1,8 @@
 package com.cervidae.shutupandwork.pojo;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.Map;
 @Data
 public class Ranking {
 
+    @Setter(AccessLevel.PRIVATE)
     private Map<Integer, User> rankMap;
 
     private int top;

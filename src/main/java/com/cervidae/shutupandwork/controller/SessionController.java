@@ -28,7 +28,7 @@ public class SessionController {
         if (user==null) {
             throw new IllegalArgumentException("cannot find user in database");
         }
-        Session session = sessionService.joinOrCreate(user, sessionID);
+        Session session = sessionService.join(user, sessionID);
         return Response.success(session);
     }
 
@@ -36,12 +36,6 @@ public class SessionController {
     public Response<Session> getSession(@RequestParam String sessionID) {
         Session session = sessionService.getSession(sessionID);
         return Response.success(session);
-    }
-
-    @PostMapping(params = {"sessionID", "status"})
-    public Response<?> setStatus(String sessionID, Session.Status status) {
-        sessionService.setStatus(sessionID, status);
-        return Response.success();
     }
 
     public Response<?> start(String sessionID, long target) {
