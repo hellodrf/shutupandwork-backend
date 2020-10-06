@@ -14,6 +14,12 @@ public class Session {
 
     private Map<String, User> userList; // List of all users in ConcurrentHashMap
 
+    private long created;
+
+    private long started;
+
+    private long target;
+
     private Status status;
 
     private User failSource;
@@ -23,6 +29,7 @@ public class Session {
         this.userList.put(startUser.getUsername(), startUser);
         this.id = id;
         this.status = Status.WAITING;
+        this.created = System.currentTimeMillis()/1000;
     }
 
     public boolean addUser(User user) {
@@ -33,4 +40,12 @@ public class Session {
             return true;
         }
     }
+
+    public void setStatus(Status status) {
+        if (status==Status.ACTIVE && this.status!=Status.ACTIVE) {
+            this.started = System.currentTimeMillis()/1000;
+            this.status = Status.ACTIVE;
+        }
+    }
+
 }

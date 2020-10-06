@@ -17,7 +17,7 @@ public interface UserMapper {
     User findByID(@Param("id") long id);
 
     @Insert("INSERT INTO USER " +
-            "VALUES (NULL, #{username}, #{score}, NULL)")
+            "VALUES (NULL, #{username}, #{score})")
     void add(@Param("username") String username, @Param("score") int score);
 
     @Update("UPDATE USER " +

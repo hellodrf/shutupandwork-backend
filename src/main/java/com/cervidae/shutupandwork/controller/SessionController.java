@@ -22,7 +22,7 @@ public class SessionController {
         this.userService = userService;
     }
 
-    @PostMapping(params = {"username", "sessionID"})
+    @PostMapping(params = {"username", "sessionID", "join"})
     public Response<Session> join(@RequestParam String username, @RequestParam String sessionID) {
         User user = userService.getByUsername(username);
         if (user==null) {
@@ -41,6 +41,17 @@ public class SessionController {
     @PostMapping(params = {"sessionID", "status"})
     public Response<?> setStatus(String sessionID, Session.Status status) {
         sessionService.setStatus(sessionID, status);
+        return Response.success();
+    }
+
+    public Response<?> start(String sessionID, long target) {
+        sessionService.start(sessionID, target);
+        return Response.success();
+    }
+
+    @PostMapping(params = {"username", "sessionID", "leave"})
+    public Response<?> leave(@RequestParam String username, @RequestParam String sessionID) {
+        sessionService.leave(username, sessionID);
         return Response.success();
     }
 }

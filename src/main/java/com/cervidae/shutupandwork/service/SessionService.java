@@ -41,10 +41,22 @@ public class SessionService {
 
     public void setStatus(String sessionID, Session.Status status) {
         if (iCache.contains(sessionID)) {
-            Session session = iCache.select(sessionID);
+            Session session = getSession(sessionID);
             session.setStatus(status);
         } else {
             throw new IllegalArgumentException("cannot find specified session");
         }
+    }
+
+    public void start(String sessionID, long target) {
+
+    }
+
+    public void leave(String username, String sessionID) {
+        Session session = getSession(sessionID);
+        if (session.getUserList().containsKey(username)) {
+
+        };
+
     }
 }
