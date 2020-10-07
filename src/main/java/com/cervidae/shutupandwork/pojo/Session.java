@@ -8,6 +8,10 @@ import lombok.Setter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This data will be stored in: MEMORY
+ */
+
 @Data
 public class Session {
 
@@ -105,7 +109,7 @@ public class Session {
         if (getStatus()!= Session.Status.ACTIVE) {
             throw new IllegalArgumentException("session is not in active state");
         }
-        if ((this.started+this.target) - System.currentTimeMillis()/1000< Constants.sessionSuccessThreshold) {
+        if ((this.started+this.target) - System.currentTimeMillis()/1000 < Constants.sessionSuccessThreshold) {
             this.setStatus(Session.Status.SUCCESS);
         } else {
             throw new IllegalArgumentException("session has not reach its target, maximum threshold: "

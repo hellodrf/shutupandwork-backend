@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.cervidae</groupId>
-    <artifactId>cbooking</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>SUAW</artifactId>
+    <version>0.1</version>
     <name>ShutUpAndWork</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Collaborate Pomodoro (backend)</description>
 
     <properties>
         <java.version>14</java.version>
@@ -60,10 +60,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
     </dependencies>
