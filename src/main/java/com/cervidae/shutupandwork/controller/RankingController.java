@@ -2,6 +2,7 @@ package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.pojo.Ranking;
 import com.cervidae.shutupandwork.service.RankingService;
+import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +25,8 @@ public class RankingController {
      * @return ranking
      */
     @GetMapping(params = {"top"})
-    public Ranking getRanking(int top) {
-        return rankingService.getRankings(top);
+    public Response<Ranking> get(int top) {
+        return Response.success(rankingService.getRankings(top));
     }
 
     /**
@@ -35,7 +36,7 @@ public class RankingController {
      * @return ranking
      */
     @GetMapping(params = {"top", "forced"})
-    public Ranking getForcedRanking(int top) {
+    public Ranking getForced(int top) {
         return rankingService.getLatestRankings(top);
     }
 

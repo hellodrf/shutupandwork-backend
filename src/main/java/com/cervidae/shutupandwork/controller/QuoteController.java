@@ -21,19 +21,19 @@ public class QuoteController {
     }
 
     @GetMapping
-    public Response<Quote> getQuote() {
+    public Response<Quote> get() {
         Quote quote = quoteService.getRandomQuotes(1).get(0);
         return Response.success(quote);
     }
 
     @GetMapping(params = {"count"})
-    public Response<List<Quote>> getMultipleQuotes(@RequestParam int count) {
+    public Response<List<Quote>> getMultiple(@RequestParam int count) {
         List<Quote> quotes = quoteService.getRandomQuotes(count);
         return Response.success(quotes);
     }
 
     @PostMapping(params = {"quote", "type", "password"})
-    public Response<?> addQuote(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
+    public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
         if (!password.equals(Constants.adminPassword)) {
             throw new IllegalArgumentException("incorrect admin password");
         }
@@ -48,7 +48,7 @@ public class QuoteController {
      * @return the deleted quote
      */
     @DeleteMapping(params = {"id", "password"})
-    public Response<Quote> deleteQuote(@RequestParam int id, String password) {
+    public Response<Quote> delete(@RequestParam int id, String password) {
         if (!password.equals(Constants.adminPassword)) {
             throw new IllegalArgumentException("incorrect admin password");
         }

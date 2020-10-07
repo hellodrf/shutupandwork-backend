@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements IService {
     private final UserMapper userMapper;
 
     @Autowired
@@ -15,19 +15,48 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    /**
+     * Get user by username, will return null when user does not exist.
+     * @param username username of the user
+     * @return the user
+     */
     public User getByUsername(String username) {
-        return userMapper.findByUsername(username);
+        return userMapper.getByUsername(username);
     }
 
-    public User getById(int id) {
-        return userMapper.findByID(id);
+    /**
+     * Get user by username, will throw IllegalArgumentException when user does not exist.
+     * @param username username of the user
+     * @return the user
+     */
+    public User getByUsernameNotNull(String username) {
+        User user = userMapper.getByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("cannot find user in database");
+        }
+        return user;
     }
 
+    /**
+     * Add the user to database
+     * @param username username of the user
+     * @param score score of the user
+     */
     public void add(String username, int score) {
+        User user = userMapper.getByUsername(username);
+        if (user != null) {
+            throw new IllegalArgumentException("user already exists");
+        }
         userMapper.add(username, score);
     }
 
+    /**
+     * Update a user's score (with optimistic lock)
+     * @param username username of the user
+     * @param score new score
+     */
     public void update(String username, int score) {
-        userMapper.update(username, score);
+        long version = getByUsername(username).getVersion();
+        userMapper.updateOptimistic(username, score, version);
     }
 }

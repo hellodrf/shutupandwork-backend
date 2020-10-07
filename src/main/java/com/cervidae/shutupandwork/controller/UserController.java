@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UserController {
 
-    private final UserService userService;
+    final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -24,17 +24,14 @@ public class UserController {
      * @return required user
      */
     @GetMapping(params = {"username"})
-    public Response<User> getByUsername(@RequestParam String username) {
-        User user = userService.getByUsername(username);
-        if (user==null) {
-            throw new IllegalArgumentException("cannot find user in database");
-        }
+    public Response<User> get(@RequestParam String username) {
+        User user = userService.getByUsernameNotNull(username);
         return Response.success(user);
     }
 
     /**
      * Update a user's data. If user do not exist, add it to the database.
-     * Idempotent action,
+     * Idempotent action.
      * Usage: POST /users?username=your_user_name?score=your_score
      * @param username target's username
      * @param score target's score

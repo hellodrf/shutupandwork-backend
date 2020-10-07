@@ -6,10 +6,9 @@ import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SessionService {
+public class SessionService implements IService {
 
     final ICache<String, Session> iCache;
 
@@ -63,24 +62,21 @@ public class SessionService {
         return iCache.select(sessionID);
     }
 
-    /*
-     * Below are Pessimistic locked actions.
-     * Using "synchronised" since we are manipulating memory values, and we are not distributed.
-     */
+    public Session getSessionNotNull(String sessionID) {
+        if (!iCache.contains(sessionID)) {
+            throw new IllegalArgumentException("cannot find specified session");
+        }
+        return iCache.select(sessionID);
+    }
 
     /**
      * Start the session (Pessimistic lock, see Session)
      * @param sessionID ID of the session
      * @param target the target of the session
      */
-    public synchronized void start(String sessionID, long target) {
+    public Session start(String sessionID, long target) {
         validateID(sessionID);
-        if (iCache.contains(sessionID)) {
-            Session session = getSession(sessionID);
-            session.start(target);
-        } else {
-            throw new IllegalArgumentException("cannot find specified session");
-        }
+        return getSessionNotNull(sessionID).start(target);
     }
 
     /**
@@ -88,14 +84,9 @@ public class SessionService {
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param sessionID ID of the session
      */
-    public synchronized void finish(String sessionID) {
+    public Session success(String sessionID) {
         validateID(sessionID);
-        if (iCache.contains(sessionID)) {
-            Session session = getSession(sessionID);
-            session.finish();
-        } else {
-            throw new IllegalArgumentException("cannot find specified session");
-        }
+        return getSessionNotNull(sessionID).success();
     }
 
     /**
@@ -104,14 +95,9 @@ public class SessionService {
      * @param sessionID ID of the session
      * @param username user to blame
      */
-    public synchronized void fail(String sessionID, String username) {
+    public Session fail(String sessionID, String username) {
         validateID(sessionID);
-        if (iCache.contains(sessionID)) {
-            Session session = getSession(sessionID);
-            User user = userService.getByUsername(username);
-            session.fail(user);
-        } else {
-            throw new IllegalArgumentException("cannot find specified session");
-        }
+        User user = userService.getByUsername(username);
+        return getSessionNotNull(sessionID).fail(user);
     }
 }

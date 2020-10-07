@@ -1,5 +1,6 @@
 package com.cervidae.shutupandwork.pojo;
 
+import com.cervidae.shutupandwork.util.Constants;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -13,7 +14,7 @@ public class Session {
     /**
      * Status of the session
      */
-    public enum Status {WAITING, ACTIVE, PAUSED, FINISHED, FAILED}
+    public enum Status {WAITING, ACTIVE, PAUSE, SUCCESS, FAIL}
 
     @Setter(AccessLevel.PRIVATE)
     private Status status;
@@ -74,29 +75,43 @@ public class Session {
         userList.remove(user.getUsername(), user);
     }
 
+
+    /*
+     * Below are Pessimistic locked actions.
+     * Using "synchronised" since we are manipulating memory values, and we are not distributed.
+     */
+
+
     /**
      * Start the session
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param target the target of the session
      */
-    public synchronized void start(long target) {
+    public synchronized Session start(long target) {
         if (getStatus() != Status.WAITING) {
             throw new IllegalArgumentException("session is not in waiting state");
         }
         this.setTarget(target);
         this.setStarted(System.currentTimeMillis()/1000);
         this.setStatus(Session.Status.ACTIVE);
+        return this;
     }
 
     /**
      * Mark the session as succeed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      */
-    public synchronized void finish() {
+    public synchronized Session success() {
         if (getStatus()!= Session.Status.ACTIVE) {
             throw new IllegalArgumentException("session is not in active state");
         }
-        this.setStatus(Session.Status.FINISHED);
+        if ((this.started+this.target) - System.currentTimeMillis()/1000< Constants.sessionSuccessThreshold) {
+            this.setStatus(Session.Status.SUCCESS);
+        } else {
+            throw new IllegalArgumentException("session has not reach its target, maximum threshold: "
+                    + Constants.sessionSuccessThreshold + " seconds");
+        }
+        return this;
     }
 
     /**
@@ -104,11 +119,12 @@ public class Session {
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param user the user to blame
      */
-    public synchronized void fail(User user) {
+    public synchronized Session fail(User user) {
         if (getStatus()!= Session.Status.ACTIVE) {
             throw new IllegalArgumentException("session is not in active state");
         }
         this.setFailSource(user);
-        this.setStatus(Session.Status.FAILED);
+        this.setStatus(Session.Status.FAIL);
+        return this;
     }
 }

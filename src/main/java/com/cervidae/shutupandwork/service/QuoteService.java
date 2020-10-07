@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class QuoteService {
+public class QuoteService implements IService {
     private final QuoteMapper quoteMapper;
 
     @Autowired
@@ -29,7 +29,7 @@ public class QuoteService {
         for (int i=0; i < count; i++) {
             Quote next = null;
             while (next==null||quotes.contains(next)) {
-                next = quoteMapper.getRandomQuote();
+                next = quoteMapper.getRandom();
             }
             quotes.add(next);
         }
@@ -37,18 +37,18 @@ public class QuoteService {
     }
 
     public Quote getQuoteByID(int id) {
-        return quoteMapper.getQuoteByID(id);
+        return quoteMapper.getByID(id);
     }
 
     public void addQuote(String quote, int type) {
         if (quote.equals("")) {
             throw new IllegalArgumentException("quote field must not be empty");
         }
-        quoteMapper.addQuote(quote, type);
+        quoteMapper.add(quote, type);
     }
 
     public Quote deleteQuote(int id) {
-        Quote quote = quoteMapper.getQuoteByID(id);
+        Quote quote = quoteMapper.getByID(id);
         quoteMapper.delete(id);
         return quote;
     }
