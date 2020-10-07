@@ -37,10 +37,31 @@ public class SessionService implements IService {
         Session session;
         if (iCache.contains(sessionID)) {
             session = iCache.select(sessionID);
+            if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
+                session.reset();
+            } else if (session.getStatus() != Session.Status.WAITING) {
+                throw new IllegalArgumentException("session is not in WAITING state");
+            }
             session.addUser(user);
         } else {
             session = new Session(user, sessionID);
             iCache.insert(sessionID, session);
+        }
+        return session;
+    }
+
+    /**
+     * Reset a session to WAITING state.
+     * It must be in SUCCESS or FAIL state, but WAITING is tolerated (no change inflicted)
+     * @param sessionID ID of the session
+     * @return the session
+     */
+    public Session reset(String sessionID) {
+        Session session = getSessionNotNull(sessionID);
+        if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
+            session.reset();
+        } else if (session.getStatus() != Session.Status.WAITING) {
+            throw new IllegalArgumentException("session is not in SUCCESS/FAIL state");
         }
         return session;
     }
@@ -58,10 +79,20 @@ public class SessionService implements IService {
         }
     }
 
+    /**
+     * Get a specific session with sessionID, nullable
+     * @param sessionID ID of the session
+     * @return the session
+     */
     public Session getSession(String sessionID) {
         return iCache.select(sessionID);
     }
 
+    /**
+     * Get a specific session with sessionID, not nullable (will throw exception)
+     * @param sessionID ID of the session
+     * @return the session
+     */
     public Session getSessionNotNull(String sessionID) {
         if (!iCache.contains(sessionID)) {
             throw new IllegalArgumentException("cannot find specified session");

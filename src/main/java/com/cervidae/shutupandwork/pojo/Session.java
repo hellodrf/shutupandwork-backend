@@ -131,4 +131,9 @@ public class Session {
         this.setStatus(Session.Status.FAIL);
         return this;
     }
+
+    public synchronized void reset() {
+        this.setStatus(Status.WAITING);
+        this.setFailSource(null);
+    }
 }

@@ -20,18 +20,33 @@ public class QuoteController {
         this.quoteService = quoteService;
     }
 
+    /**
+     * Get a random quote
+     * @return a quote
+     */
     @GetMapping
     public Response<Quote> get() {
         Quote quote = quoteService.getRandomQuotes(1).get(0);
         return Response.success(quote);
     }
 
+    /**
+     * Get several random quotes
+     * @return list of quotes
+     */
     @GetMapping(params = {"count"})
     public Response<List<Quote>> getMultiple(@RequestParam int count) {
         List<Quote> quotes = quoteService.getRandomQuotes(count);
         return Response.success(quotes);
     }
 
+    /**
+     * Admin only: add a quote to database
+     * @param quote the quote
+     * @param type type of quote, defined in Util.Constants
+     * @param password admin password
+     * @return empty success response
+     */
     @PostMapping(params = {"quote", "type", "password"})
     public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
         if (!password.equals(Constants.adminPassword)) {
@@ -48,7 +63,7 @@ public class QuoteController {
      * @return the deleted quote
      */
     @DeleteMapping(params = {"id", "password"})
-    public Response<Quote> delete(@RequestParam int id, String password) {
+    public Response<Quote> delete(@RequestParam int id, @RequestParam String password) {
         if (!password.equals(Constants.adminPassword)) {
             throw new IllegalArgumentException("incorrect admin password");
         }

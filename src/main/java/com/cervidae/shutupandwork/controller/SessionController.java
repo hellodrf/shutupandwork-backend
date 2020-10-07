@@ -58,4 +58,9 @@ public class SessionController {
     public Response<Session> fail(String sessionID, String username) {
         return Response.success(sessionService.fail(sessionID, username));
     }
+
+    @PostMapping(params = {"sessionID", "reset"})
+    public Response<Session> reset(String sessionID) {
+        return Response.success(sessionService.reset(sessionID));
+    }
 }
