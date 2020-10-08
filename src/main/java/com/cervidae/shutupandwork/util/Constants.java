@@ -11,7 +11,7 @@ public class Constants {
     public static final int rankingCacheExpiry = 5000; // Unix timestamp (1s = 1000)
 
     /**
-     * Admin password
+     * Admin password (may soon be deprecated)
      */
     public static final String adminPassword = "12345";
 
