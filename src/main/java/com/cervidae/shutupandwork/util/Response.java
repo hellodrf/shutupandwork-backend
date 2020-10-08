@@ -12,19 +12,24 @@ public class Response<T> implements Serializable {
 
     public static final long serialVersionUID = 4210673593941538294L;
 
-    private long timestamp;
+    private long timeStamp;
 
     private int success; // 0=fail 1=success
 
-    private String message; // error message
+    private Integer code = null;
+
+    private String message = null; // error message
 
     private T payload;
 
-    private Response(T payload, int success, String message) {
+    private Response(T payload, int success, String code) {
         this.payload = payload;
         this.success = success;
-        this.message = message;
-        this.timestamp = System.currentTimeMillis()/1000;
+        if (code != null) {
+            this.code = Integer.parseInt(code);
+            this.message = Constants.errorCodeMap.get(this.code);
+        }
+        this.timeStamp = System.currentTimeMillis();
     }
 
     /**
@@ -57,22 +62,22 @@ public class Response<T> implements Serializable {
 
     /**
      * Produce a failure response, with an error message
-     * @param message an error message in string
+     * @param code error code in string
      * @param <T> no use, wildcard is fine
      * @return a failure response with error message
      */
-    public static <T> Response<T> fail(String message) {
-        return new Response<>(null, 0, message);
+    public static <T> Response<T> fail(String code) {
+        return new Response<>(null, 0, code);
     }
 
     /**
      * Produce a failure response, with an error message and a payload
-     * @param message an error message in string
+     * @param code errorCode in String
      * @param payload payload to carry
      * @param <T> payload type
      * @return a failure response with payload and error message
      */
-    public static <T> Response<T> fail(String message, T payload) {
-        return new Response<>(payload, 0, message);
+    public static <T> Response<T> fail(String code, T payload) {
+        return new Response<>(payload, 0, code);
     }
 }

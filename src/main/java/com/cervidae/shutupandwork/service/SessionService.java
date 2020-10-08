@@ -6,6 +6,7 @@ import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service
 public class SessionService implements IService {
@@ -20,12 +21,15 @@ public class SessionService implements IService {
         this.userService = userService;
     }
 
+    /**
+     * Validate sessionID using Regex (Util.Constants.sessionIDRegex)
+     * @param sessionID the session id
+     */
     private void validateID(String sessionID) {
         // validate sessionID
-        if (!sessionID.matches(Constants.sessionIDRegex)) {
-            throw new IllegalArgumentException("sessionID must be a 6 digit number");
-        }
+        Assert.isTrue(sessionID.matches(Constants.sessionIDRegex), "4005");
     }
+
     /**
      * Join the specified session. If not exist, create a session
      * @param user the user
@@ -40,7 +44,7 @@ public class SessionService implements IService {
             if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
                 session.reset();
             } else if (session.getStatus() != Session.Status.WAITING) {
-                throw new IllegalArgumentException("session is not in WAITING state");
+                throw new IllegalArgumentException("4001");
             }
             session.addUser(user);
         } else {
@@ -51,26 +55,14 @@ public class SessionService implements IService {
     }
 
     /**
-     * Reset a session to WAITING state.
-     * It must be in SUCCESS or FAIL state, but WAITING is tolerated (no change inflicted)
+     * Leave the specified session.
+     * @param user the user
      * @param sessionID ID of the session
-     * @return the session
      */
-    public Session reset(String sessionID) {
-        Session session = getSessionNotNull(sessionID);
-        if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
-            session.reset();
-        } else if (session.getStatus() != Session.Status.WAITING) {
-            throw new IllegalArgumentException("session is not in SUCCESS/FAIL state");
-        }
-        return session;
-    }
-
-    public void leave(String username, String sessionID) {
+    public void leave(User user, String sessionID) {
         validateID(sessionID);
         Session session = getSession(sessionID);
-        if (session.getUserList().containsKey(username)) {
-            User user = userService.getByUsername(username);
+        if (session.getUserList().containsKey(user.getUsername())) {
             if (session.getStatus()== Session.Status.ACTIVE) {
                 session.fail(user);
             } else {
@@ -94,9 +86,7 @@ public class SessionService implements IService {
      * @return the session
      */
     public Session getSessionNotNull(String sessionID) {
-        if (!iCache.contains(sessionID)) {
-            throw new IllegalArgumentException("cannot find specified session");
-        }
+        Assert.isTrue(iCache.contains(sessionID), "4004");
         return iCache.select(sessionID);
     }
 
@@ -131,4 +121,22 @@ public class SessionService implements IService {
         User user = userService.getByUsername(username);
         return getSessionNotNull(sessionID).fail(user);
     }
+
+    /**
+     * Reset a session to WAITING state.
+     * It must be in SUCCESS or FAIL state, but WAITING is tolerated (no change inflicted)
+     * @param sessionID ID of the session
+     * @return the session
+     */
+    public Session reset(String sessionID) {
+        Session session = getSessionNotNull(sessionID);
+        if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
+            session.reset();
+        } else if (session.getStatus() != Session.Status.WAITING) {
+            // waiting state is tolerated
+            throw new IllegalArgumentException("4003");
+        }
+        return session;
+    }
+
 }

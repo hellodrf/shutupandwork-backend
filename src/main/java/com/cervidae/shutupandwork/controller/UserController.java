@@ -45,6 +45,6 @@ public class UserController {
         else {
             userService.update(username, score);
         }
-        return Response.success();
+        return Response.success(userService.getByUsernameNotNull(username));
     }
 }

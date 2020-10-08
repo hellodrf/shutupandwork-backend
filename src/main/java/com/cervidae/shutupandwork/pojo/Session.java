@@ -4,6 +4,7 @@ import com.cervidae.shutupandwork.util.Constants;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import org.springframework.util.Assert;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +47,7 @@ public class Session {
     /**
      * Blamable user
      */
-    private User failSource;
+    private User failSource = null;
 
     /**
      * Set created timestamp, and status of WAITING.
@@ -58,7 +59,7 @@ public class Session {
         this.userList.put(startUser.getUsername(), startUser);
         this.sessionID = sessionID;
         this.status = Status.WAITING;
-        this.created = System.currentTimeMillis()/1000;
+        this.created = System.currentTimeMillis();
     }
 
     /**
@@ -93,10 +94,10 @@ public class Session {
      */
     public synchronized Session start(long target) {
         if (getStatus() != Status.WAITING) {
-            throw new IllegalArgumentException("session is not in waiting state");
+            throw new IllegalArgumentException("4001");
         }
         this.setTarget(target);
-        this.setStarted(System.currentTimeMillis()/1000);
+        this.setStarted(System.currentTimeMillis());
         this.setStatus(Session.Status.ACTIVE);
         return this;
     }
@@ -106,14 +107,13 @@ public class Session {
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      */
     public synchronized Session success() {
-        if (getStatus()!= Session.Status.ACTIVE) {
-            throw new IllegalArgumentException("session is not in active state");
+        if (getStatus() != Session.Status.ACTIVE) {
+            throw new IllegalArgumentException("4002");
         }
-        if ((this.started+this.target) - System.currentTimeMillis()/1000 < Constants.sessionSuccessThreshold) {
+        if ((this.started+this.target) - System.currentTimeMillis() < Constants.sessionSuccessThreshold) {
             this.setStatus(Session.Status.SUCCESS);
         } else {
-            throw new IllegalArgumentException("session has not reach its target, maximum threshold: "
-                    + Constants.sessionSuccessThreshold + " seconds");
+            throw new IllegalArgumentException("4003");
         }
         return this;
     }
@@ -125,7 +125,7 @@ public class Session {
      */
     public synchronized Session fail(User user) {
         if (getStatus()!= Session.Status.ACTIVE) {
-            throw new IllegalArgumentException("session is not in active state");
+            throw new IllegalArgumentException("4002");
         }
         this.setFailSource(user);
         this.setStatus(Session.Status.FAIL);

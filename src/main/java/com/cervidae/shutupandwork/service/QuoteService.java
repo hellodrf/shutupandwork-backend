@@ -5,6 +5,7 @@ import com.cervidae.shutupandwork.pojo.Quote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +41,20 @@ public class QuoteService implements IService {
         return quoteMapper.getByID(id);
     }
 
+    /**
+     * Add a quote to database (admin)
+     * @param quote the quote
+     * @param type type of the quote
+     */
     public void addQuote(String quote, int type) {
-        if (quote.equals("")) {
-            throw new IllegalArgumentException("quote field must not be empty");
-        }
+        Assert.hasText(quote, "2001");
         quoteMapper.add(quote, type);
     }
 
+    /**
+     * Remove a quote from database (admin)
+     * @param id id of the quote
+     */
     public Quote deleteQuote(int id) {
         Quote quote = quoteMapper.getByID(id);
         quoteMapper.delete(id);

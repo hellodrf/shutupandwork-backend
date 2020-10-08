@@ -4,6 +4,8 @@ import com.cervidae.shutupandwork.pojo.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 @Mapper
 @Repository("UserMapper")
 public interface UserMapper extends IMapper {
@@ -13,17 +15,17 @@ public interface UserMapper extends IMapper {
     User getByUsername(@Param("username") String username);
 
     @Insert("INSERT INTO USER " +
-            "VALUES (NULL, #{username}, #{score}, 0)")
-    void add(@Param("username") String username, @Param("score") int score);
+            "VALUES (NULL, #{username}, #{score}, #{currentTime})")
+    void add(@Param("username") String username, @Param("score") int score, @Param("currentTime") long currentTime);
 
     @Update("UPDATE USER " +
-            "SET score=#{score} version=version+1" +
+            "SET score=#{score} " +
             "WHERE username=#{username}")
     void update(@Param("username") String username, @Param("score") int score);
 
     @Update("UPDATE USER " +
-            "SET score=#{score} version=version+1" +
-            "WHERE username=#{username} and version=#{version}")
+            "SET score=#{score}, updated=#{currentTime} " +
+            "WHERE username=#{username} and updated=#{updated}")
     void updateOptimistic(@Param("username") String username, @Param("score") int score,
-                          @Param("version") long version);
+                          @Param("updated") long updated, @Param("currentTime") long currentTime);
 }

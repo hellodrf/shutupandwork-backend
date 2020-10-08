@@ -5,9 +5,12 @@ import com.cervidae.shutupandwork.dao.UserMapper;
 import com.cervidae.shutupandwork.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
 
 @Service
 public class UserService implements IService {
+
     private final UserMapper userMapper;
 
     @Autowired
@@ -30,10 +33,9 @@ public class UserService implements IService {
      * @return the user
      */
     public User getByUsernameNotNull(String username) {
+        // user must exist in database
         User user = userMapper.getByUsername(username);
-        if (user == null) {
-            throw new IllegalArgumentException("cannot find user in database");
-        }
+        Assert.notNull(user, "3001");
         return user;
     }
 
@@ -43,11 +45,12 @@ public class UserService implements IService {
      * @param score score of the user
      */
     public void add(String username, int score) {
+        // user must not exist in database
         User user = userMapper.getByUsername(username);
-        if (user != null) {
-            throw new IllegalArgumentException("user already exists");
-        }
-        userMapper.add(username, score);
+        Assert.isNull(user, "3002");
+
+        long currentTime = System.currentTimeMillis();
+        userMapper.add(username, score, currentTime);
     }
 
     /**
@@ -56,7 +59,8 @@ public class UserService implements IService {
      * @param score new score
      */
     public void update(String username, int score) {
-        long version = getByUsername(username).getVersion();
-        userMapper.updateOptimistic(username, score, version);
+        long updated = getByUsername(username).getUpdated();
+        long currentTime = System.currentTimeMillis();
+        userMapper.updateOptimistic(username, score, updated, currentTime);
     }
 }

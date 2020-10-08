@@ -11,6 +11,6 @@ public class User {
 
     private int score;
 
-    private long version;
+    private long updated;
 
 }

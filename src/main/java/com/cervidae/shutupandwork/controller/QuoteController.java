@@ -43,14 +43,14 @@ public class QuoteController {
     /**
      * Admin only: add a quote to database
      * @param quote the quote
-     * @param type type of quote, defined in Util.Constants
-     * @param password admin password
+     * @param type type of quote
+     * @param password admin password, defined in Util.Constants
      * @return empty success response
      */
     @PostMapping(params = {"quote", "type", "password"})
     public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
         if (!password.equals(Constants.adminPassword)) {
-            throw new IllegalArgumentException("incorrect admin password");
+            throw new IllegalArgumentException("1001");
         }
         quoteService.addQuote(quote, type);
         return Response.success();
@@ -65,7 +65,7 @@ public class QuoteController {
     @DeleteMapping(params = {"id", "password"})
     public Response<Quote> delete(@RequestParam int id, @RequestParam String password) {
         if (!password.equals(Constants.adminPassword)) {
-            throw new IllegalArgumentException("incorrect admin password");
+            throw new IllegalArgumentException("1001");
         }
         Quote quote = quoteService.deleteQuote(id);
         return Response.success(quote);
