@@ -4,6 +4,9 @@ import com.cervidae.shutupandwork.pojo.Quote;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author AaronDu
+ */
 @Mapper
 @Repository("QuoteMapper")
 public interface QuoteMapper extends IMapper {

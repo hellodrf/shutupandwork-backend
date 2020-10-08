@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * @author AaronDu
+ */
 @Data
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Response<T> implements Serializable {
@@ -14,11 +17,17 @@ public class Response<T> implements Serializable {
 
     private long timeStamp;
 
-    private int success; // 0=fail 1=success
+    /**
+     * 0=fail 1=success
+     */
+    private int success;
 
     private Integer code = null;
 
-    private String message = null; // error message
+    /**
+     * error message
+     */
+    private String message = null;
 
     private T payload;
 
@@ -27,7 +36,7 @@ public class Response<T> implements Serializable {
         this.success = success;
         if (code != null) {
             this.code = Integer.parseInt(code);
-            this.message = Constants.errorCodeMap.get(this.code);
+            this.message = Constants.ERROR_CODE_MAP.get(this.code);
         }
         this.timeStamp = System.currentTimeMillis();
     }

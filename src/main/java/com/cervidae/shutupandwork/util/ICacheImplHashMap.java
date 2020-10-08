@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author AaronDu
+ */
 @Service
 @Scope("prototype")
 @Primary

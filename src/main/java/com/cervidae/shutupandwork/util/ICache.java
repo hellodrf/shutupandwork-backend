@@ -2,6 +2,9 @@ package com.cervidae.shutupandwork.util;
 
 import org.springframework.stereotype.Service;
 
+/**
+ * @author AaronDu
+ */
 @Service
 public interface ICache<K, V> {
 

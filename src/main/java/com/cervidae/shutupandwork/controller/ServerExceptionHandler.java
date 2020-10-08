@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+/**
+ * @author AaronDu
+ */
 @RestControllerAdvice
 public class ServerExceptionHandler {
 

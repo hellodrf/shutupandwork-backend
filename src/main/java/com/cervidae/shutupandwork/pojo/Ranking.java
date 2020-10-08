@@ -7,6 +7,9 @@ import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author AaronDu
+ */
 @Data
 public class Ranking {
 
@@ -15,7 +18,10 @@ public class Ranking {
 
     private int top;
 
-    private long timeGenerated; // Unix timestamp (1s = 1000)
+    /**
+     * Unix timestamp (1s = 1000)
+     */
+    private long timeGenerated;
 
     /**
      * Pack SQL result (array of users) into a ranking object

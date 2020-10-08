@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 
+/**
+ * @author AaronDu
+ */
 @Mapper
 @Repository("UserMapper")
 public interface UserMapper extends IMapper {

@@ -6,6 +6,9 @@ import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author AaronDu
+ */
 @RestController
 @RequestMapping("users")
 public class UserController {
@@ -32,7 +35,7 @@ public class UserController {
     /**
      * Update a user's data. If user do not exist, add it to the database.
      * Idempotent action.
-     * Usage: POST /users?username=your_user_name?score=your_score
+     * Usage: POST /users?username=your_username?score=your_score
      * @param username target's username
      * @param score target's score
      * @return required user

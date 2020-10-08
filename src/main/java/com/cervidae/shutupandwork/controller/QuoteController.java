@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author AaronDu
+ */
 @RestController
 @RequestMapping("quotes")
 public class QuoteController {
@@ -49,7 +52,7 @@ public class QuoteController {
      */
     @PostMapping(params = {"quote", "type", "password"})
     public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
-        if (!password.equals(Constants.adminPassword)) {
+        if (!password.equals(Constants.ADMIN_PASSWORD)) {
             throw new IllegalArgumentException("1001");
         }
         quoteService.addQuote(quote, type);
@@ -64,7 +67,7 @@ public class QuoteController {
      */
     @DeleteMapping(params = {"id", "password"})
     public Response<Quote> delete(@RequestParam int id, @RequestParam String password) {
-        if (!password.equals(Constants.adminPassword)) {
+        if (!password.equals(Constants.ADMIN_PASSWORD)) {
             throw new IllegalArgumentException("1001");
         }
         Quote quote = quoteService.deleteQuote(id);

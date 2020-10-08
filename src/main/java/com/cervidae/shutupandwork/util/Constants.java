@@ -3,38 +3,41 @@ package com.cervidae.shutupandwork.util;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author AaronDu
+ */
 public class Constants {
 
     /**
-     * Lifetime of ranking cache
+     * Lifetime of ranking cache, Unix timestamp (1s = 1000)
      */
-    public static final int rankingCacheExpiry = 5000; // Unix timestamp (1s = 1000)
+    public static final int RANKING_CACHE_EXPIRY = 5000;
 
     /**
      * Admin password (may soon be deprecated)
      */
-    public static final String adminPassword = "12345";
+    public static final String ADMIN_PASSWORD = "12345";
 
     /**
      * SessionID requirement, you must change both of them at the same time
      */
-    public static final String sessionIDRegex = "[0-9]{6}"; // 6 digit number
+    public static final String SESSION_ID_REGEX = "[0-9]{6}";
 
-    public static final String sessionIDDescription = "a 6 digit number";
+    public static final String SESSION_ID_DESCRIPTION = "a 6 digit number";
 
     /**
-     * Maximum threshold for a session to succeed
+     * Maximum threshold for a session to succeed, Unix timestamp (1s = 1000)
      */
-    public static final int sessionSuccessThreshold = 5000; // Unix timestamp (1s = 1000)
+    public static final int SESSION_SUCCESS_THRESHOLD = 5000;
 
     /**
      * Map of error code to error message
      */
-    public static final Map<Integer, String> errorCodeMap = new HashMap<>() {
+    public static final Map<Integer, String> ERROR_CODE_MAP = new HashMap<>() {
         {
             // System
             put(1001, "Incorrect admin password");
-            put(1002, "Internal error, please contact system admin");
+            put(1002, "Internal server error, please contact system admin");
             put(1003, "Database error, please contact system admin");
             put(1404, "Resource not found");
 
@@ -50,9 +53,9 @@ public class Constants {
             put(4002, "Session is not in active state");
             put(4003, "Session is not in success or fail state");
             put(4004, "Cannot find specified session");
-            put(4005, "SessionID must be " + sessionIDDescription);
+            put(4005, "SessionID must be " + SESSION_ID_DESCRIPTION);
             put(4006, "Session has not reach its target, maximum threshold is: "
-                    + Constants.sessionSuccessThreshold/1000 + " seconds");
+                    + Constants.SESSION_SUCCESS_THRESHOLD /1000 + " seconds");
 
         }
     };

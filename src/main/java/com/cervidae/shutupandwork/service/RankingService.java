@@ -7,6 +7,9 @@ import com.cervidae.shutupandwork.util.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author AaronDu
+ */
 @Service
 public class RankingService implements IService {
 
@@ -27,7 +30,7 @@ public class RankingService implements IService {
      */
     public Ranking getRankings(int top) {
         Ranking cache = iCache.select(top);
-        if (cache == null || cache.isExpired(Constants.rankingCacheExpiry)) {
+        if (cache == null || cache.isExpired(Constants.RANKING_CACHE_EXPIRY)) {
             Ranking latest = getLatestRankings(top);
             iCache.put(top, latest);
             return latest;

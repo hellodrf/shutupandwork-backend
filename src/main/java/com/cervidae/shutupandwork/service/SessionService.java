@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+/**
+ * @author AaronDu
+ */
 @Service
 public class SessionService implements IService {
 
@@ -27,7 +30,7 @@ public class SessionService implements IService {
      */
     private void validateID(String sessionID) {
         // validate sessionID
-        Assert.isTrue(sessionID.matches(Constants.sessionIDRegex), "4005");
+        Assert.isTrue(sessionID.matches(Constants.SESSION_ID_REGEX), "4005");
     }
 
     /**

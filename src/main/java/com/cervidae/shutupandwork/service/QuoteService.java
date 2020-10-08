@@ -10,6 +10,9 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author AaronDu
+ */
 @Service
 public class QuoteService implements IService {
     private final QuoteMapper quoteMapper;

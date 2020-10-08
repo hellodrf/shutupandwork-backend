@@ -4,15 +4,14 @@ import com.cervidae.shutupandwork.util.Constants;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
-import org.springframework.util.Assert;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This data will be stored in: MEMORY
+ * @author AaronDu
  */
-
 @Data
 public class Session {
 
@@ -30,10 +29,10 @@ public class Session {
     private String sessionID;
 
     /**
-     * List of Users in session
+     * List of Users in session (ConcurrentHashMap)
      */
     @Setter(AccessLevel.PRIVATE)
-    private Map<String, User> userList; // List of all users in ConcurrentHashMap
+    private Map<String, User> userList;
 
     /**
      * Timestamps in format of UNIX timestamp
@@ -110,7 +109,7 @@ public class Session {
         if (getStatus() != Session.Status.ACTIVE) {
             throw new IllegalArgumentException("4002");
         }
-        if ((this.started+this.target) - System.currentTimeMillis() < Constants.sessionSuccessThreshold) {
+        if ((this.started+this.target) - System.currentTimeMillis() < Constants.SESSION_SUCCESS_THRESHOLD) {
             this.setStatus(Session.Status.SUCCESS);
         } else {
             throw new IllegalArgumentException("4003");

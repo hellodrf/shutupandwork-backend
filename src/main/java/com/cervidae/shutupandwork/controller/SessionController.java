@@ -6,11 +6,13 @@ import com.cervidae.shutupandwork.service.SessionService;
 import com.cervidae.shutupandwork.service.UserService;
 import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author AaronDu
+ */
 @RestController
-@RequestMapping("session")
+@RequestMapping("sessions")
 public class SessionController {
 
     private final SessionService sessionService;
@@ -25,6 +27,7 @@ public class SessionController {
 
     /**
      * Get a specific session with sessionID, not nullable (will throw exception)
+     * Usage: GET /sessions?sessionID=your_sessionID
      * @param sessionID ID of the session
      * @return the session
      */
@@ -36,6 +39,7 @@ public class SessionController {
 
     /**
      * Join the specified session. If not exist, create a session
+     * Usage: POST /sessions?username=your_username?sessionID=your_sessionID?join
      * @param username the user's username
      * @param sessionID ID of the session
      * @return the session
@@ -48,7 +52,8 @@ public class SessionController {
     }
 
     /**
-     * Leave the specified session.
+     * Leave the specified session. Will fail the session if session is in active status
+     * Usage: POST /sessions?username=your_username?sessionID=your_sessionID?leave
      * @param username the user's username
      * @param sessionID ID of the session
      */
@@ -60,7 +65,9 @@ public class SessionController {
     }
 
     /**
-     * Start the session (Pessimistic lock, see Session)
+     * Start the session
+     * Pessimistic lock: since this function need only be called EXACTLY ONCE
+     * Usage: POST /sessions?sessionID=your_sessionID?target=your_target?start
      * @param sessionID ID of the session
      * @param target the target of the session
      * @return the session
@@ -71,8 +78,9 @@ public class SessionController {
     }
 
     /**
-     * Mark the session as succeed (Pessimistic lock, see Session)
+     * Mark the session as succeed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
+     * Usage: POST /sessions?sessionID=your_sessionID?success
      * @param sessionID ID of the session
      * @return the session
      */
@@ -82,8 +90,9 @@ public class SessionController {
     }
 
     /**
-     * Mark the session as failed (Pessimistic lock, see Session)
+     * Mark the session as failed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
+     * Usage: POST /sessions?sessionID=your_sessionID?username=your_username?fail
      * @param sessionID ID of the session
      * @param username user to blame
      * @return the session
@@ -96,6 +105,8 @@ public class SessionController {
     /**
      * Reset a session to WAITING state.
      * It must be in SUCCESS or FAIL state, but WAITING is tolerated (no change inflicted)
+     * Usage: POST /sessions?sessionID=your_sessionID?reset
+     * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param sessionID ID of the session
      * @return the session
      */
