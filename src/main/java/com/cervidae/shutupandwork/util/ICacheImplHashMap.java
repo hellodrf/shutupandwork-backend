@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -95,5 +96,10 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
     @Override
     public boolean contains(K key) {
         return cacheMap.containsKey(key);
+    }
+
+    @Override
+    public Set<K> getKeySet() {
+        return cacheMap.keySet();
     }
 }

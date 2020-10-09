@@ -2,6 +2,8 @@ package com.cervidae.shutupandwork.util;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 /**
  * @author AaronDu
  */
@@ -55,5 +57,8 @@ public interface ICache<K, V> {
      * @return whether the key is in cache
      */
     boolean contains(K key);
+
+
+    Set<K> getKeySet();
 
 }

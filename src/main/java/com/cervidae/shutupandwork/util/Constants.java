@@ -27,8 +27,16 @@ public class Constants {
 
     /**
      * Maximum threshold for a session to succeed, Unix timestamp (1s = 1000)
+     * 5 seconds
      */
     public static final int SESSION_SUCCESS_THRESHOLD = 5000;
+
+    /**
+     * How long should the session be kept in cache, Unix timestamp (1s = 1000)
+     * 1 day (86400 seconds)
+     * PS. this actually means sessions will be removed midnight the day after
+     */
+    public static final int SESSION_EXPIRY = 86400000;
 
     /**
      * Map of error code to error message
@@ -56,7 +64,6 @@ public class Constants {
             put(4005, "SessionID must be " + SESSION_ID_DESCRIPTION);
             put(4006, "Session has not reach its target, maximum threshold is: "
                     + Constants.SESSION_SUCCESS_THRESHOLD /1000 + " seconds");
-
         }
     };
 

@@ -5,8 +5,11 @@ import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Set;
 
 /**
  * @author AaronDu
@@ -31,6 +34,22 @@ public class SessionService implements IService {
     private void validateID(String sessionID) {
         // validate sessionID
         Assert.isTrue(sessionID.matches(Constants.SESSION_ID_REGEX), "4005");
+    }
+
+    /**
+     * Remove expired sessions (see Constants.SESSION_EXPIRY)
+     * Cron task scheduled 3am everyday
+     */
+    @Scheduled(cron = "00 03 * * * ?")
+    public synchronized void collectExpiredSessions() {
+        Set<String> sessionIDs = iCache.getKeySet();
+        for (String id : sessionIDs) {
+            Session session = iCache.select(id);
+            if (session.getStatus() != Session.Status.ACTIVE &&
+                    System.currentTimeMillis() - session.getCreated() > Constants.SESSION_EXPIRY) {
+                iCache.drop(id);
+            }
+        }
     }
 
     /**
@@ -141,5 +160,4 @@ public class SessionService implements IService {
         }
         return session;
     }
-
 }

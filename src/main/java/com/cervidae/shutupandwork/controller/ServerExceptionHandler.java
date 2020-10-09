@@ -1,21 +1,25 @@
 package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.util.Response;
+import lombok.SneakyThrows;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.lang.reflect.Method;
+
 /**
  * @author AaronDu
  */
 @RestControllerAdvice
-public class ServerExceptionHandler {
+public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
 
     /* AOP exception handlers */
 
     /**
-     * All Other Exceptions
+     * All Other Exceptions: return "Internal Error"
      * @param e Exception instance thrown
      * @return fail response
      */
@@ -52,5 +56,16 @@ public class ServerExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public Response<?> invalidParameterHandler(Exception e) {
         return Response.fail(e.getMessage());
+    }
+
+    @Override
+    public void handleUncaughtException(Throwable throwable, Method method, Object... objects) {
+        if (throwable instanceof Exception) {
+            if (throwable instanceof IllegalArgumentException) {
+                invalidParameterHandler((Exception) throwable);
+            } else {
+                allExceptionHandler((Exception) throwable);
+            }
+        }
     }
 }
