@@ -3,8 +3,10 @@ package com.cervidae.shutupandwork.pojo;
 import com.cervidae.shutupandwork.util.Constants;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author AaronDu
  */
 @Data
-public class Session {
+@NoArgsConstructor
+public class Session implements Serializable {
+
+    public static final long serialVersionUID = -297507546308848284L;
 
     /**
      * Status of the session
@@ -109,10 +114,10 @@ public class Session {
         if (getStatus() != Session.Status.ACTIVE) {
             throw new IllegalArgumentException("4002");
         }
-        if ((this.started+this.target) - System.currentTimeMillis() < Constants.SESSION_SUCCESS_THRESHOLD) {
+        if ((this.started+this.target- System.currentTimeMillis()) < Constants.SESSION_SUCCESS_THRESHOLD) {
             this.setStatus(Session.Status.SUCCESS);
         } else {
-            throw new IllegalArgumentException("4003");
+            throw new IllegalArgumentException("4006");
         }
         return this;
     }

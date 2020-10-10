@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,32 +13,22 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author AaronDu
  */
 @Service
-@Scope("prototype")
 @Primary
-public class ICacheImplHashMap<K, V> implements ICache<K, V>{
+@Scope("prototype")
+public class ICacheImplHashMap<V extends Serializable> implements ICache<V>{
 
-    private final Map<K, V> cacheMap;
+    private final Map<String, V> cacheMap;
 
     public ICacheImplHashMap() {
         this.cacheMap = new ConcurrentHashMap<>();
     }
 
     /**
-     * Insert into the cache if not already exist, then return true.
-     * if already exists, update it.
-     * @param key key of the cache
-     * @param value value of the cache
-     * @return a boolean signifies if the action is successful
+     * Do nothing, hashmap don't require this since we are in prototype scope.
+     * @param identifier data prefix
      */
     @Override
-    public boolean insert(K key, V value) {
-        if (cacheMap.containsKey(key)) {
-            return false;
-        } else {
-            cacheMap.put(key, value);
-            return true;
-        }
-    }
+    public void setIdentifier(int identifier) {}
 
     /**
      * Get the cached value according to key
@@ -45,36 +36,8 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
      * @return value of the cache, or null if key not found
      */
     @Override
-    public V select(K key) {
+    public V select(String key) {
         return cacheMap.get(key);
-    }
-
-    /**
-     * Update the value if key already exists, then return true.
-     * If key not exist, do nothing and return false
-     * @param key key of the cache
-     * @param value value of the cache
-     * @return a boolean signifies if the action is successful
-     */
-    @Override
-    public boolean update(K key, V value) {
-        if (cacheMap.containsKey(key)) {
-            cacheMap.put(key, value);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Remove the cache, then return true
-     * If key not exist, do nothing and return false
-     * @param key key of the cache
-     * @return a boolean signifies if the action is successful
-     */
-    @Override
-    public boolean drop(K key) {
-        return cacheMap.remove(key) != null;
     }
 
     /**
@@ -84,8 +47,19 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
      * @param value value of the cache
      */
     @Override
-    public void put(K key, V value) {
+    public void put(String key, V value) {
         cacheMap.put(key, value);
+    }
+
+    /**
+     * Remove the cache, then return true
+     * If key not exist, do nothing and return false
+     * @param key key of the cache
+     * @return a boolean signifies if the action is successful
+     */
+    @Override
+    public boolean drop(String key) {
+        return cacheMap.remove(key) != null;
     }
 
     /**
@@ -94,12 +68,12 @@ public class ICacheImplHashMap<K, V> implements ICache<K, V>{
      * @return whether the key is in cache
      */
     @Override
-    public boolean contains(K key) {
+    public boolean contains(String key) {
         return cacheMap.containsKey(key);
     }
 
     @Override
-    public Set<K> getKeySet() {
+    public Set<String> getKeySet() {
         return cacheMap.keySet();
     }
 }

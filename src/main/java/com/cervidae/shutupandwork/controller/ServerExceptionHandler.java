@@ -4,11 +4,13 @@ import com.cervidae.shutupandwork.util.Response;
 import lombok.SneakyThrows;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.dao.DataAccessException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 /**
  * @author AaronDu
@@ -25,7 +27,30 @@ public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public Response<?> allExceptionHandler(Exception e) {
+        Logger.getGlobal().severe("Unexpected exception caught: " + e.getClass().getName());
+        e.printStackTrace();
         return Response.fail("1002", e.getMessage());
+    }
+
+    /**
+     * IllegalArgumentException: thrown in case of "illegal (logically)" arguments provided by the request
+     * @param e Exception instance thrown
+     * @return fail response
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Response<?> invalidParameterHandler(Exception e) {
+        return Response.fail(e.getMessage());
+    }
+
+    /**
+     * UnsatisfiedServletRequestParameterException: thrown in case of "incorrect (number/type)"
+     * arguments provided by the request
+     * @param e Exception instance thrown
+     * @return fail response
+     */
+    @ExceptionHandler(UnsatisfiedServletRequestParameterException.class)
+    public Response<?> unsatisfiedServletRequestParameterExceptionHandler(Exception e) {
+        return Response.fail("1006");
     }
 
     /**
@@ -46,16 +71,6 @@ public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public Response<?> noHandlerFoundExceptionHandler(Exception e) {
         return Response.fail("1404");
-    }
-
-    /**
-     * IllegalArgumentException: thrown in case of illegal arguments provided by the request
-     * @param e Exception instance thrown
-     * @return fail response
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public Response<?> invalidParameterHandler(Exception e) {
-        return Response.fail(e.getMessage());
     }
 
     @Override

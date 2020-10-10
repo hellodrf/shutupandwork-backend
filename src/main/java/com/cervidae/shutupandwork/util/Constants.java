@@ -48,6 +48,8 @@ public class Constants {
             put(1002, "Internal server error, please contact system admin");
             put(1003, "Database error, please contact system admin");
             put(1404, "Resource not found");
+            put(1005, "Redis cache error, please contact system admin");
+            put(1006, "Argument requirements not satisfied");
 
             // Quote
             put(2001, "Quote must not be empty");

@@ -2,8 +2,10 @@ package com.cervidae.shutupandwork.pojo;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +13,10 @@ import java.util.Map;
  * @author AaronDu
  */
 @Data
-public class Ranking {
+@NoArgsConstructor
+public class Ranking implements Serializable {
+
+    public static final long serialVersionUID = 6813392678220161008L;
 
     @Setter(AccessLevel.PRIVATE)
     private Map<Integer, User> rankMap;

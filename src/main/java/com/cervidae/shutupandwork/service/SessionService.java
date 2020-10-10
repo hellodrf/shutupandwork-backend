@@ -17,14 +17,15 @@ import java.util.Set;
 @Service
 public class SessionService implements IService {
 
-    final ICache<String, Session> iCache;
+    final ICache<Session> iCache;
 
     final UserService userService;
 
     @Autowired
-    public SessionService(ICache<String, Session> iCache, UserService userService) {
-        this.iCache = iCache;
+    public SessionService(ICache<Session> iCache, UserService userService) {
         this.userService = userService;
+        this.iCache = iCache;
+        this.iCache.setIdentifier(2);
     }
 
     /**
@@ -71,8 +72,8 @@ public class SessionService implements IService {
             session.addUser(user);
         } else {
             session = new Session(user, sessionID);
-            iCache.insert(sessionID, session);
         }
+        iCache.put(sessionID, session);
         return session;
     }
 
@@ -91,6 +92,7 @@ public class SessionService implements IService {
                 session.removeUser(user);
             }
         }
+        iCache.put(sessionID, session);
     }
 
     /**
@@ -119,7 +121,9 @@ public class SessionService implements IService {
      */
     public Session start(String sessionID, long target) {
         validateID(sessionID);
-        return getSessionNotNull(sessionID).start(target);
+        Session session = getSessionNotNull(sessionID).start(target);
+        iCache.put(sessionID, session);
+        return session;
     }
 
     /**
@@ -129,7 +133,9 @@ public class SessionService implements IService {
      */
     public Session success(String sessionID) {
         validateID(sessionID);
-        return getSessionNotNull(sessionID).success();
+        Session session = getSessionNotNull(sessionID).success();
+        iCache.put(sessionID, session);
+        return session;
     }
 
     /**
@@ -141,7 +147,9 @@ public class SessionService implements IService {
     public Session fail(String sessionID, String username) {
         validateID(sessionID);
         User user = userService.getByUsername(username);
-        return getSessionNotNull(sessionID).fail(user);
+        Session session = getSessionNotNull(sessionID).fail(user);
+        iCache.put(sessionID, session);
+        return session;
     }
 
     /**
@@ -154,6 +162,7 @@ public class SessionService implements IService {
         Session session = getSessionNotNull(sessionID);
         if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
             session.reset();
+            iCache.put(sessionID, session);
         } else if (session.getStatus() != Session.Status.WAITING) {
             // waiting state is tolerated
             throw new IllegalArgumentException("4003");
