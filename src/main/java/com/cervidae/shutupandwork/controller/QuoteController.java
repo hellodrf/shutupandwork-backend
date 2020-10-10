@@ -5,6 +5,7 @@ import com.cervidae.shutupandwork.service.QuoteService;
 import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,9 +53,7 @@ public class QuoteController {
      */
     @PostMapping(params = {"quote", "type", "password"})
     public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
-        if (!password.equals(Constants.ADMIN_PASSWORD)) {
-            throw new IllegalArgumentException("1001");
-        }
+        Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
         quoteService.addQuote(quote, type);
         return Response.success();
     }
@@ -67,9 +66,7 @@ public class QuoteController {
      */
     @DeleteMapping(params = {"id", "password"})
     public Response<Quote> delete(@RequestParam int id, @RequestParam String password) {
-        if (!password.equals(Constants.ADMIN_PASSWORD)) {
-            throw new IllegalArgumentException("1001");
-        }
+        Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
         Quote quote = quoteService.deleteQuote(id);
         return Response.success(quote);
     }

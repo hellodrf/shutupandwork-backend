@@ -20,6 +20,8 @@ public class User implements Serializable {
 
     private int score;
 
+    private String password;
+
     private long updated;
 
 }

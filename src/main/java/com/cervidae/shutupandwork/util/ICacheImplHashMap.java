@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author AaronDu
  */
 @Service
-@Primary
 @Scope("prototype")
 public class ICacheImplHashMap<V extends Serializable> implements ICache<V>{
 

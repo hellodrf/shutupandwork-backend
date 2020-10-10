@@ -4,8 +4,10 @@ import com.cervidae.shutupandwork.pojo.Session;
 import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.service.SessionService;
 import com.cervidae.shutupandwork.service.UserService;
+import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -113,5 +115,18 @@ public class SessionController {
     @PostMapping(params = {"sessionID", "reset"})
     public Response<Session> reset(String sessionID) {
         return Response.success(sessionService.reset(sessionID));
+    }
+
+    /**
+     * Remove expired sessions (see Constants.SESSION_EXPIRY, currently 1 day)
+     * There is a cron task scheduled 3am everyday, but you can call it manually anytime
+     * @param password admin password
+     * @return success response
+     */
+    @PostMapping(params = {"gc", "password"})
+    public Response<?> gc(String password) {
+        Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
+        sessionService.collectExpiredSessions();
+        return Response.success("Garbage collect completed.");
     }
 }

@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Service
+@Primary
 @Scope("prototype")
 public class ICacheImplRedis<V extends Serializable> implements ICache<Serializable> {
 
@@ -21,6 +22,8 @@ public class ICacheImplRedis<V extends Serializable> implements ICache<Serializa
     public ICacheImplRedis(RedisTemplate<String, Serializable> serializableRedisTemplate) {
         this.serializableRedisTemplate = serializableRedisTemplate;
     }
+
+    private int prefix;
 
     /**
      * Set the redis database we are using (0-15)
@@ -36,31 +39,46 @@ public class ICacheImplRedis<V extends Serializable> implements ICache<Serializa
         lettuceConnectionFactory.setDatabase(identifier);
         lettuceConnectionFactory.resetConnection();
         serializableRedisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        this.prefix = identifier;
     }
 
     @Override
     @SuppressWarnings(value = "unchecked")
     public V select(String key) {
-        return (V) serializableRedisTemplate.opsForValue().get(key);
+        return (V) serializableRedisTemplate.opsForValue().get(addPrefix(key));
     }
 
     @Override
     public void put(String key, Serializable value) {
-        serializableRedisTemplate.opsForValue().set(key, value);
+        serializableRedisTemplate.opsForValue().set(addPrefix(key), value);
     }
 
     @Override
     public boolean drop(String key) {
-        return Boolean.TRUE.equals(serializableRedisTemplate.delete(key));
+        return Boolean.TRUE.equals(serializableRedisTemplate.delete(addPrefix(key)));
     }
 
     @Override
     public boolean contains(String key) {
-        return Boolean.TRUE.equals(serializableRedisTemplate.hasKey(key));
+        return Boolean.TRUE.equals(serializableRedisTemplate.hasKey(addPrefix(key)));
     }
 
     @Override
     public Set<String> getKeySet() {
-        return serializableRedisTemplate.keys("*");
+        return serializableRedisTemplate.keys(prefix +"#.*");
+    }
+
+    private String addPrefix(String key) {
+        return prefix + "#" + key;
+    }
+
+    private String removePrefix(String prefixedKey) {
+        String pf = prefixedKey.substring(0, prefix/10+1);
+        if (!pf.equals(prefix + "#")) {
+            return "";
+        }
+        StringBuilder stringBuilder = new StringBuilder(prefixedKey);
+        stringBuilder.delete(0, prefix/10+1);
+        return stringBuilder.toString();
     }
 }

@@ -1,14 +1,15 @@
-package com.cervidae.shutupandwork.configuration;
+package com.cervidae.shutupandwork.config;
 
 import com.cervidae.shutupandwork.controller.ServerExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
+/**
+ * WARNING: DO NOT USE, STILL IN DEVELOPMENT
+ */
 public class AsyncConfig implements AsyncConfigurer {
     @Override
     public Executor getAsyncExecutor() {

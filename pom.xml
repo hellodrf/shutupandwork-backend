@@ -66,6 +66,12 @@
             <artifactId>commons-pool2</artifactId>
             <version>2.6.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring-boot-web-starter</artifactId>
+            <version>1.5.1</version>
+        </dependency>
     </dependencies>
 
     <build>

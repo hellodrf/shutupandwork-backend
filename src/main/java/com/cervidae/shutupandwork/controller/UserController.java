@@ -3,8 +3,15 @@ package com.cervidae.shutupandwork.controller;
 import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.service.UserService;
 import com.cervidae.shutupandwork.util.Response;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author AaronDu
@@ -49,5 +56,26 @@ public class UserController {
             userService.update(username, score);
         }
         return Response.success(userService.getByUsernameNotNull(username));
+    }
+
+    @PostMapping(value = "login", params = {"u", "p"})
+    public Response<?> login(@RequestParam String u, @RequestParam String p){
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(u, p);
+        try{
+            subject.login(token);
+        } catch (AuthenticationException e){
+            return Response.fail();
+        }
+        if (!subject.isAuthenticated()) return Response.fail();
+        else return Response.success();
+    }
+
+    @PostMapping(value = "logout", params = {"u"})
+    public Response<?> logout(@RequestParam String u){
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        if (subject.isAuthenticated()) return Response.fail();
+        else return Response.success();
     }
 }
