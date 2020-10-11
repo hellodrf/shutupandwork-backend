@@ -1,29 +1,27 @@
 package com.cervidae.shutupandwork.config;
 
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class ShiroConfig {
 
-    private final UserRealm userRealm;
+    private final IRealm iRealm;
 
     @Autowired
-    public ShiroConfig(UserRealm userRealm) {
-        this.userRealm = userRealm;
+    public ShiroConfig(IRealm iRealm) {
+        this.iRealm = iRealm;
     }
 
     @Bean(name = "shiroFilterFactoryBean")
@@ -33,9 +31,13 @@ public class ShiroConfig {
         // Filters
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>() {
             {
+                put("/users/register", "anon");
+                put("/quotes", "anon");
+                put("/rankings", "anon");
                 put("/users/logout", "anon");
-                put("/afterlogout", "anon");
-                put("/afterlogin", "anon");
+                put("/logout", "logout");
+
+                // all else require authentication
                 put("/**", "authc");
             }
         };
@@ -45,14 +47,24 @@ public class ShiroConfig {
     }
 
     @Bean
-    public SessionsSecurityManager iSecurityManager() {
+    public SessionsSecurityManager iSecurityManager(@Qualifier("hashedCredentialsMatcher")
+                                                                HashedCredentialsMatcher matcher) {
         DefaultWebSecurityManager iSecurityManager = new DefaultWebSecurityManager();
-        iSecurityManager.setRealm(userRealm);
+        iRealm.setCredentialsMatcher(matcher);
+        iSecurityManager.setRealm(iRealm);
         return iSecurityManager;
     }
 
     @Bean(name="lifecycleBeanPostProcessor")
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
+    }
+
+    @Bean(name = "hashedCredentialsMatcher")
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        hashedCredentialsMatcher.setHashAlgorithmName("MD5");
+        hashedCredentialsMatcher.setHashIterations(1024);
+        return hashedCredentialsMatcher;
     }
 }

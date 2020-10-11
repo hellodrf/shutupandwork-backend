@@ -1,9 +1,9 @@
 package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.util.Response;
-import lombok.SneakyThrows;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.dao.DataAccessException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,8 +28,12 @@ public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Response<?> allExceptionHandler(Exception e) {
         Logger.getGlobal().severe("Unexpected exception caught: " + e.getClass().getName());
-        e.printStackTrace();
         return Response.fail("1002", e.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Response<?> HttpRequestMethodNotSupportedExceptionHandler(Exception e) {
+        return Response.fail("3003");
     }
 
     /**

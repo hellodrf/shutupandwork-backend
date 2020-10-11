@@ -1,5 +1,6 @@
 package com.cervidae.shutupandwork.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,10 @@ public class User implements Serializable {
 
     private int score;
 
+    @JsonIgnore
+    private String role;
+
+    @JsonIgnore
     private String password;
 
     private long updated;

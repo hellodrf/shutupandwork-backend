@@ -7,17 +7,18 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
 @Component
-public class UserRealm extends AuthorizingRealm {
+public class IRealm extends AuthorizingRealm {
     private final UserService userService;
 
     @Autowired
-    public UserRealm(UserService userService) {
+    public IRealm(UserService userService) {
         this.userService = userService;
     }
 
@@ -32,14 +33,18 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {
-        String username = (String) authenticationToken.getPrincipal();
+        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
+        String username = token.getUsername();
         User user = userService.getByUsername(username);
+
         if (user != null) {
-            return new SimpleAuthenticationInfo(user.getUsername(), user.getPassword(),
-                    user.getUsername());
-        } else {
-            return null;
+            // add salt
+            ByteSource salt = ByteSource.Util.bytes(username);
+            String realmName = this.getName();
+            return new SimpleAuthenticationInfo(username, user.getPassword(),
+                    salt, realmName);
         }
+        return null;
     }
 }
 

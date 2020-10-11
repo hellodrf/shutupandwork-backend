@@ -3,6 +3,8 @@ package com.cervidae.shutupandwork.service;
 
 import com.cervidae.shutupandwork.dao.UserMapper;
 import com.cervidae.shutupandwork.pojo.User;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -41,11 +43,22 @@ public class UserService implements IService {
         return user;
     }
 
+    public User getByID(int id) {
+        return userMapper.getById(id);
+    }
+
+    public User getByIDNotNull(int id) {
+        User user = userMapper.getById(id);
+        Assert.notNull(user, "3001");
+        return user;
+    }
+
     /**
-     * Add the user to database
+     * DEPRECATED! Add the user to database
      * @param username username of the user
      * @param score score of the user
      */
+    @Deprecated
     public void add(String username, int score) {
         // user must not exist in database
         User user = userMapper.getByUsername(username);
@@ -55,14 +68,26 @@ public class UserService implements IService {
         userMapper.add(username, score, currentTime);
     }
 
+    public User register(String username, String password) {
+        ByteSource salt = ByteSource.Util.bytes(username);
+        String hashedPassword = new SimpleHash("MD5", password, salt, 1024).toHex();
+
+        // user must not exist in database
+        User user = userMapper.getByUsername(username);
+        Assert.isNull(user, "3002");
+
+        long currentTime = System.currentTimeMillis();
+        userMapper.register(username, hashedPassword, currentTime, "user");
+        return userMapper.getByUsername(username);
+    }
+
     /**
      * Update a user's score (with optimistic lock)
      * @param username username of the user
      * @param score new score
      */
-    public void update(String username, int score) {
-        long updated = getByUsername(username).getUpdated();
-        long currentTime = System.currentTimeMillis();
-        userMapper.updateOptimistic(username, score, updated, currentTime);
+    public void update(int id, String username, int score) {
+        long updated = getByIDNotNull(id).getUpdated();
+        userMapper.updateOptimistic(id, username, score, updated, System.currentTimeMillis());
     }
 }

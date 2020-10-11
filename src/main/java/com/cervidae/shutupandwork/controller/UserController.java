@@ -5,13 +5,12 @@ import com.cervidae.shutupandwork.service.UserService;
 import com.cervidae.shutupandwork.util.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 /**
  * @author AaronDu
@@ -39,6 +38,13 @@ public class UserController {
         return Response.success(user);
     }
 
+    @GetMapping
+    public Response<User> get() {
+        Subject subject = SecurityUtils.getSubject();
+        User user = userService.getByUsernameNotNull((String) subject.getPrincipal());
+        return Response.success(user);
+    }
+
     /**
      * Update a user's data. If user do not exist, add it to the database.
      * Idempotent action.
@@ -48,18 +54,15 @@ public class UserController {
      * @return required user
      */
     @PostMapping(params = {"username", "score"})
-    public Response<?> put(@RequestParam String username, @RequestParam int score) {
-        if (userService.getByUsername(username) == null) {
-            userService.add(username, score);
-        }
-        else {
-            userService.update(username, score);
-        }
+    public Response<?> update(@RequestParam String username, @RequestParam int score) {
+        Subject subject = SecurityUtils.getSubject();
+        User user = userService.getByUsernameNotNull((String) subject.getPrincipal());
+        userService.update(user.getId(), username, score);
         return Response.success(userService.getByUsernameNotNull(username));
     }
 
     @PostMapping(value = "login", params = {"u", "p"})
-    public Response<?> login(@RequestParam String u, @RequestParam String p){
+    public Response<User> login(@RequestParam String u, @RequestParam String p){
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(u, p);
         try{
@@ -68,14 +71,21 @@ public class UserController {
             return Response.fail();
         }
         if (!subject.isAuthenticated()) return Response.fail();
-        else return Response.success();
+        else return Response.success(userService.getByUsername(u));
     }
 
-    @PostMapping(value = "logout", params = {"u"})
-    public Response<?> logout(@RequestParam String u){
+    @PostMapping(value = "logout")
+    public Response<?> logout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         if (subject.isAuthenticated()) return Response.fail();
         else return Response.success();
+    }
+
+    @PostMapping(value = "register", params = {"u", "p"})
+    public Response<User> register(@RequestParam String u, @RequestParam String p) {
+        User user = userService.register(u, p);
+        Assert.notNull(user, "3002");
+        return Response.success(user);
     }
 }

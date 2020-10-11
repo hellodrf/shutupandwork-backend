@@ -57,6 +57,8 @@ public class Constants {
             // User
             put(3001, "Cannot find user in database");
             put(3002, "User already exists");
+            put(3003, "Unauthorized action");
+            put(3004, "Invalid credentials");
 
             // Session
             put(4001, "Session is not in waiting state");
