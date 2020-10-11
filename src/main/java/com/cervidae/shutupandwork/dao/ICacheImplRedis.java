@@ -1,4 +1,4 @@
-package com.cervidae.shutupandwork.util;
+package com.cervidae.shutupandwork.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;

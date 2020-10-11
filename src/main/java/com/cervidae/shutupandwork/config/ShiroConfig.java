@@ -2,8 +2,13 @@ package com.cervidae.shutupandwork.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -40,13 +45,14 @@ public class ShiroConfig {
                 put("/quotes/admin", "roles[admin]");
                 put("/quotes", "anon");
                 put("/rankings", "anon");
-                put("/session/gc", "roles[admin]");
+                put("/sessions/gc", "roles[admin]");
 
                 // all else requires authentication
                 put("/**", "authc");
             }
         };
         shiroFilterFactoryBean.setLoginUrl("/users/login");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/users/403");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
@@ -71,5 +77,46 @@ public class ShiroConfig {
         hashedCredentialsMatcher.setHashAlgorithmName("MD5");
         hashedCredentialsMatcher.setHashIterations(1024);
         return hashedCredentialsMatcher;
+    }
+
+    /**
+     * Session Manager (shiro-redis)
+     */
+    @Bean
+    public SessionManager sessionManager() {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        sessionManager.setSessionDAO(redisSessionDAO());
+        return sessionManager;
+    }
+
+    /**
+     * Cache Manager (shiro-redis)
+     */
+    @Bean
+    public RedisCacheManager redisCacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        redisCacheManager.setExpire(5000);
+        redisCacheManager.setPrincipalIdFieldName("id");
+        return redisCacheManager;
+    }
+
+    /**
+     * RedisManager (shiro-redis)
+     */
+    @Bean
+    public RedisManager redisManager() {
+        return new RedisManager();
+    }
+
+    /**
+     * RedisSessionDAO (shiro-redis)
+     */
+    @Bean
+    public RedisSessionDAO redisSessionDAO() {
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        redisSessionDAO.setExpire(2000);
+        return redisSessionDAO;
     }
 }

@@ -6,8 +6,9 @@ import com.cervidae.shutupandwork.service.SessionService;
 import com.cervidae.shutupandwork.service.UserService;
 import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.Response;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -41,13 +42,14 @@ public class SessionController {
 
     /**
      * Join the specified session. If not exist, create a session
-     * Usage: POST /sessions?username=your_username?sessionID=your_sessionID?join
-     * @param username the user's username
+     * Usage: POST /sessions?sessionID=your_sessionID?join
      * @param sessionID ID of the session
      * @return the session
      */
-    @PostMapping(params = {"username", "sessionID", "join"})
-    public Response<Session> join(@RequestParam String username, @RequestParam String sessionID) {
+    @PostMapping(params = {"sessionID", "join"})
+    public Response<Session> join(@RequestParam String sessionID) {
+        Subject subject = SecurityUtils.getSubject();
+        String username = (String) subject.getPrincipal();
         User user = userService.getByUsernameNotNull(username);
         Session session = sessionService.join(user, sessionID);
         return Response.success(session);
@@ -55,12 +57,13 @@ public class SessionController {
 
     /**
      * Leave the specified session. Will fail the session if session is in active status
-     * Usage: POST /sessions?username=your_username?sessionID=your_sessionID?leave
-     * @param username the user's username
+     * Usage: POST /sessions?sessionID=your_sessionID?leave
      * @param sessionID ID of the session
      */
-    @PostMapping(params = {"username", "sessionID", "leave"})
-    public Response<?> leave(@RequestParam String username, @RequestParam String sessionID) {
+    @PostMapping(params = {"sessionID", "leave"})
+    public Response<?> leave(@RequestParam String sessionID) {
+        Subject subject = SecurityUtils.getSubject();
+        String username = (String) subject.getPrincipal();
         User user = userService.getByUsernameNotNull(username);
         sessionService.leave(user, sessionID);
         return Response.success();
@@ -94,13 +97,14 @@ public class SessionController {
     /**
      * Mark the session as failed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
-     * Usage: POST /sessions?sessionID=your_sessionID?username=your_username?fail
+     * Usage: POST /sessions?sessionID=your_sessionID?fail
      * @param sessionID ID of the session
-     * @param username user to blame
      * @return the session
      */
-    @PostMapping(params = {"username", "sessionID", "fail"})
-    public Response<Session> fail(String sessionID, String username) {
+    @PostMapping(params = {"sessionID", "fail"})
+    public Response<Session> fail(String sessionID) {
+        Subject subject = SecurityUtils.getSubject();
+        String username = (String) subject.getPrincipal();
         return Response.success(sessionService.fail(sessionID, username));
     }
 
@@ -125,6 +129,6 @@ public class SessionController {
     @PostMapping(value = "gc")
     public Response<?> gc() {
         sessionService.collectExpiredSessions();
-        return Response.success("Garbage collect completed.");
+        return Response.success("Garbage collect completed");
     }
 }

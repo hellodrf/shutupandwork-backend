@@ -3,7 +3,7 @@ package com.cervidae.shutupandwork.service;
 import com.cervidae.shutupandwork.dao.RankingMapper;
 import com.cervidae.shutupandwork.pojo.Ranking;
 import com.cervidae.shutupandwork.util.Constants;
-import com.cervidae.shutupandwork.util.ICache;
+import com.cervidae.shutupandwork.dao.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

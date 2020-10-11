@@ -6,6 +6,7 @@ import com.cervidae.shutupandwork.util.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -87,5 +88,10 @@ public class UserController {
         User user = userService.register(u, p);
         Assert.notNull(user, "3002");
         return Response.success(user);
+    }
+
+    @GetMapping(value = "403")
+    public void unauthorized() {
+        throw new UnauthenticatedException();
     }
 }

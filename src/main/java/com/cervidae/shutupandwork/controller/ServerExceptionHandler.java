@@ -1,6 +1,7 @@
 package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.util.Response;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  * @author AaronDu
  */
 @RestControllerAdvice
-public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
+public class ServerExceptionHandler {
 
     /* AOP exception handlers */
 
@@ -31,8 +32,8 @@ public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
         return Response.fail("1002", e.getMessage());
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public Response<?> HttpRequestMethodNotSupportedExceptionHandler(Exception e) {
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class, UnauthenticatedException.class})
+    public Response<?> UnauthenticatedExceptionHandler(Exception e) {
         return Response.fail("3003");
     }
 
@@ -77,14 +78,4 @@ public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
         return Response.fail("1404");
     }
 
-    @Override
-    public void handleUncaughtException(Throwable throwable, Method method, Object... objects) {
-        if (throwable instanceof Exception) {
-            if (throwable instanceof IllegalArgumentException) {
-                invalidParameterHandler((Exception) throwable);
-            } else {
-                allExceptionHandler((Exception) throwable);
-            }
-        }
-    }
 }

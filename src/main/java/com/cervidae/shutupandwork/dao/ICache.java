@@ -1,4 +1,4 @@
-package com.cervidae.shutupandwork.util;
+package com.cervidae.shutupandwork.dao;
 
 import org.springframework.stereotype.Service;
 

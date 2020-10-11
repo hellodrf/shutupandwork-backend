@@ -1,6 +1,5 @@
-package com.cervidae.shutupandwork.util;
+package com.cervidae.shutupandwork.dao;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 

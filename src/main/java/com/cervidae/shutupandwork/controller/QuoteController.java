@@ -48,12 +48,10 @@ public class QuoteController {
      * Admin only: add a quote to database
      * @param quote the quote
      * @param type type of quote
-     * @param password admin password, defined in Util.Constants
      * @return empty success response
      */
-    @PostMapping(value = "admin", params = {"quote", "type", "password"})
-    public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
-        Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
+    @PostMapping(value = "admin", params = {"quote", "type"})
+    public Response<?> add(@RequestParam String quote, @RequestParam int type) {
         quoteService.addQuote(quote, type);
         return Response.success();
     }
@@ -61,12 +59,10 @@ public class QuoteController {
     /**
      * Admin only: delete a quote by id
      * @param id quote id
-     * @param password admin password, defined in Util.Constants
      * @return the deleted quote
      */
-    @DeleteMapping(value = "admin", params = {"id", "password"})
-    public Response<Quote> delete(@RequestParam int id, @RequestParam String password) {
-        Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
+    @DeleteMapping(value = "admin", params = {"id"})
+    public Response<Quote> delete(@RequestParam int id) {
         Quote quote = quoteService.deleteQuote(id);
         return Response.success(quote);
     }
