@@ -12,9 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * @author AaronDu
+ */
 @Component
 public class IRealm extends AuthorizingRealm {
+
     private final UserService userService;
 
     @Autowired
@@ -22,14 +28,38 @@ public class IRealm extends AuthorizingRealm {
         this.userService = userService;
     }
 
+    /**
+     * Set roles and permissions for user
+     * @param principalCollection user principles
+     * @return a AuthorizationInfo
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        SimpleAuthorizationInfo authorizationInfo=new SimpleAuthorizationInfo();
-        authorizationInfo.setRoles(Collections.singleton("user"));
-        authorizationInfo.setStringPermissions(Collections.singleton("user"));
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        String username = (String) principalCollection.getPrimaryPrincipal();
+        User user = userService.getByUsername(username);
+        if (user != null) {
+            String role = user.getRole();
+            if (!role.equals("user")) {
+                Set<String> setRoles = new HashSet<>();
+                setRoles.add("user");
+                setRoles.add(role);
+                authorizationInfo.setRoles(setRoles);
+                authorizationInfo.setStringPermissions(setRoles);
+            } else {
+                authorizationInfo.setRoles(Collections.singleton("user"));
+                authorizationInfo.setStringPermissions(Collections.singleton("user"));
+            }
+        }
         return authorizationInfo;
     }
 
+    /**
+     * Do authentication, return a SimpleAuthenticationInfo
+     * @param authenticationToken a UsernamePasswordToken
+     * @return a SimpleAuthenticationInfo
+     * @throws AuthenticationException thrown when failed to auth
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {

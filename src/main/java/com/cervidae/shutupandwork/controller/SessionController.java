@@ -120,12 +120,10 @@ public class SessionController {
     /**
      * Remove expired sessions (see Constants.SESSION_EXPIRY, currently 1 day)
      * There is a cron task scheduled 3am everyday, but you can call it manually anytime
-     * @param password admin password
      * @return success response
      */
-    @PostMapping(params = {"gc", "password"})
-    public Response<?> gc(String password) {
-        Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
+    @PostMapping(value = "gc")
+    public Response<?> gc() {
         sessionService.collectExpiredSessions();
         return Response.success("Garbage collect completed.");
     }

@@ -14,6 +14,9 @@ import java.util.Map;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author AaronDu
+ */
 @Configuration
 public class ShiroConfig {
 
@@ -25,19 +28,21 @@ public class ShiroConfig {
     }
 
     @Bean(name = "shiroFilterFactoryBean")
-    public ShiroFilterFactoryBean shirFilter(SessionsSecurityManager iSecurityManager) {
+    public ShiroFilterFactoryBean iShiroFilter(SessionsSecurityManager iSecurityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(iSecurityManager);
         // Filters
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>() {
             {
                 put("/users/register", "anon");
-                put("/quotes", "anon");
-                put("/rankings", "anon");
                 put("/users/logout", "anon");
                 put("/logout", "logout");
+                put("/quotes/admin", "roles[admin]");
+                put("/quotes", "anon");
+                put("/rankings", "anon");
+                put("/session/gc", "roles[admin]");
 
-                // all else require authentication
+                // all else requires authentication
                 put("/**", "authc");
             }
         };
@@ -56,12 +61,12 @@ public class ShiroConfig {
     }
 
     @Bean(name="lifecycleBeanPostProcessor")
-    public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor iLifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
     @Bean(name = "hashedCredentialsMatcher")
-    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+    public HashedCredentialsMatcher iHashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("MD5");
         hashedCredentialsMatcher.setHashIterations(1024);

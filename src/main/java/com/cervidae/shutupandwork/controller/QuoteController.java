@@ -51,7 +51,7 @@ public class QuoteController {
      * @param password admin password, defined in Util.Constants
      * @return empty success response
      */
-    @PostMapping(params = {"quote", "type", "password"})
+    @PostMapping(value = "admin", params = {"quote", "type", "password"})
     public Response<?> add(@RequestParam String quote, @RequestParam int type, @RequestParam String password) {
         Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
         quoteService.addQuote(quote, type);
@@ -64,7 +64,7 @@ public class QuoteController {
      * @param password admin password, defined in Util.Constants
      * @return the deleted quote
      */
-    @DeleteMapping(params = {"id", "password"})
+    @DeleteMapping(value = "admin", params = {"id", "password"})
     public Response<Quote> delete(@RequestParam int id, @RequestParam String password) {
         Assert.isTrue(password.equals(Constants.ADMIN_PASSWORD), "1001");
         Quote quote = quoteService.deleteQuote(id);

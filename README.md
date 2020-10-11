@@ -1,18 +1,28 @@
-# Collaborate Pomodoro (backend)
+# Collaborate Pomodoro Backend
+###### App written in Swift (iOS), repository currently not public available.
 
-### Dependencies:
-Maven, SpringBoot, Mybatis, Lombok, MySQL, Redis
+#### Dependencies:
+1. **Dependency:** Maven
 
-### MySQL setup:
-Database properties see /src/main/resources/application.properties
+2. **Framework:** SpringBoot + Lombok
 
-DDL see /src/main/resources/MySQL_DDL/DDL.sql
+3. **Persistence:** MySQL + Mybatis
 
-### Compile & Run:
-mvn package && java -jar target/SUAW-0.1.jar SUAWApplication
+4. **Cache:** Redis
 
+5. **Security:** Shiro
+
+#### Setup:
+##### 1. MySQL setup:
+- Connection properties see `/src/main/resources/application.properties`
+
+- DDL see `/src/main/resources/MySQL_DDL/DDL.sql`
+
+##### 2. Redis setup:
+- Connection properties see `/src/main/resources/application.properties`
+##### 3. Compile & Run:
+- `mvn package && java -jar targert/SUAW-0.1.jar SUAWApplication`
+- or if you downloaded production jar: `java -jar SUAW-0.1.jar SUAWApplication`
 ---
 
-#### App written in Swift (iOS), repository currently not avalible to public
-
-#### Just poking around
+###### Just poking around.

@@ -43,29 +43,24 @@ public class UserService implements IService {
         return user;
     }
 
+    /**
+     * Get user by id, will return null when user does not exist.
+     * @param id id of the user
+     * @return the user
+     */
     public User getByID(int id) {
         return userMapper.getById(id);
     }
 
+    /**
+     * Get user by username, will throw IllegalArgumentException when user does not exist.
+     * @param id id of the user
+     * @return the user
+     */
     public User getByIDNotNull(int id) {
         User user = userMapper.getById(id);
         Assert.notNull(user, "3001");
         return user;
-    }
-
-    /**
-     * DEPRECATED! Add the user to database
-     * @param username username of the user
-     * @param score score of the user
-     */
-    @Deprecated
-    public void add(String username, int score) {
-        // user must not exist in database
-        User user = userMapper.getByUsername(username);
-        Assert.isNull(user, "3002");
-
-        long currentTime = System.currentTimeMillis();
-        userMapper.add(username, score, currentTime);
     }
 
     public User register(String username, String password) {
