@@ -22,7 +22,7 @@
 - Connection properties see `/src/main/resources/application.properties`
 ##### 3. Compile & Run:
 - `mvn package && java -jar targert/SUAW-0.1.jar SUAWApplication`
-- or if you downloaded production jar: `java -jar SUAW-0.1.jar SUAWApplication`
+- or if you are using production jar: `java -jar SUAW-0.1.jar SUAWApplication`
 ---
 
 ###### Just poking around.
