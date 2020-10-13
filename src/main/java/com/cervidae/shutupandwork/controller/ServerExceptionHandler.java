@@ -2,7 +2,6 @@ package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.util.Response;
 import org.apache.shiro.authz.UnauthenticatedException;
-import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 /**

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -65,7 +67,11 @@ public class ICacheImplRedis<V extends Serializable> implements ICache<Serializa
 
     @Override
     public Set<String> getKeySet() {
-        return serializableRedisTemplate.keys(prefix +"#.*");
+        Set<String> keys = new HashSet<>();
+        for (String key: Objects.requireNonNull(serializableRedisTemplate.keys(prefix + "#.*"))) {
+            keys.add(removePrefix(key));
+        }
+        return keys;
     }
 
     private String addPrefix(String key) {

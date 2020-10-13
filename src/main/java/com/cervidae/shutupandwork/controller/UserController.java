@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PostMapping(value = "login", params = {"u", "p"})
-    public Response<User> login(@RequestParam String u, @RequestParam String p){
+    public Response<User> login(@RequestParam String u, @RequestParam String p) {
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(u, p);
         try{
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     @PostMapping(value = "logout")
-    public Response<?> logout(){
+    public Response<?> logout() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         if (subject.isAuthenticated()) return Response.fail();

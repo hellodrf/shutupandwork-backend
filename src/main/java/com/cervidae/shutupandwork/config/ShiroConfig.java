@@ -11,6 +11,7 @@ import org.crazycake.shiro.RedisManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
 import java.util.LinkedHashMap;
@@ -26,6 +27,12 @@ import org.springframework.context.annotation.Configuration;
 public class ShiroConfig {
 
     private final IRealm iRealm;
+
+    @Value("${spring.redis.port}")
+    private String redisPort;
+
+    @Value("${spring.redis.host}")
+    private String redisHost;
 
     @Autowired
     public ShiroConfig(IRealm iRealm) {
@@ -96,7 +103,7 @@ public class ShiroConfig {
     public RedisCacheManager redisCacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
-        redisCacheManager.setExpire(5000);
+        redisCacheManager.setExpire(200000);
         redisCacheManager.setPrincipalIdFieldName("id");
         return redisCacheManager;
     }
@@ -106,7 +113,9 @@ public class ShiroConfig {
      */
     @Bean
     public RedisManager redisManager() {
-        return new RedisManager();
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(redisHost + ":" + redisPort);
+        return redisManager;
     }
 
     /**

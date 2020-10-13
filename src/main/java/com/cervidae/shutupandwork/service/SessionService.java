@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @author AaronDu
@@ -42,15 +43,21 @@ public class SessionService implements IService {
      * Cron task scheduled 3am everyday
      */
     @Scheduled(cron = "00 03 * * * ?")
-    public synchronized void collectExpiredSessions() {
+    public void collectExpiredSessions() {
+        int i = 0;
+        Logger logger = Logger.getLogger(this.getClass().getName());
+        logger.info("Starting Session GC");
         Set<String> sessionIDs = iCache.getKeySet();
         for (String id : sessionIDs) {
             Session session = iCache.select(id);
             if (session.getStatus() != Session.Status.ACTIVE &&
                     System.currentTimeMillis() - session.getCreated() > Constants.SESSION_EXPIRY) {
                 iCache.drop(id);
+                logger.info("Session GC: dropped session " + id);
+                i++;
             }
         }
+        logger.info("Session GC Completed: dropped " + i + " sessions");
     }
 
     /**
