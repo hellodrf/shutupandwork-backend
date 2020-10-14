@@ -74,4 +74,9 @@ public class ICacheImplHashMap<V extends Serializable> implements ICache<V>{
     public Set<String> getKeySet() {
         return cacheMap.keySet();
     }
+
+    @Override
+    public void setExpiry(String key, long expiry) {
+
+    }
 }

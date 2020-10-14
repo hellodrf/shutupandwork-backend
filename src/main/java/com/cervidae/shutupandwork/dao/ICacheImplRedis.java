@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Primary
@@ -73,6 +74,12 @@ public class ICacheImplRedis<V extends Serializable> implements ICache<Serializa
         }
         return keys;
     }
+
+    @Override
+    public void setExpiry(String key, long expiry) {
+        serializableRedisTemplate.expire(key, expiry, TimeUnit.MINUTES);
+    }
+
 
     private String addPrefix(String key) {
         return prefix + "#" + key;

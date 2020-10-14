@@ -45,6 +45,12 @@ public interface ICache<V extends Serializable> {
     boolean contains(String key);
 
 
+    /**
+     * Get all keys
+     * @return set of keys
+     */
     Set<String> getKeySet();
+
+    void setExpiry(String key, long expiry);
 
 }

@@ -1,6 +1,7 @@
 package com.cervidae.shutupandwork.service;
 
 
+import com.cervidae.shutupandwork.dao.ICache;
 import com.cervidae.shutupandwork.dao.UserMapper;
 import com.cervidae.shutupandwork.pojo.User;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -17,9 +18,17 @@ public class UserService implements IService {
 
     private final UserMapper userMapper;
 
+    private final ICache<User> userICache;
+
+    private final ICache<String> usernameICache;
+
     @Autowired
-    public UserService(UserMapper userMapper) {
+    public UserService(UserMapper userMapper, ICache<User> userICache, ICache<String> usernameICache) {
         this.userMapper = userMapper;
+        this.userICache = userICache;
+        this.usernameICache = usernameICache;
+        userICache.setIdentifier(4);
+        usernameICache.setIdentifier(5);
     }
 
     /**
@@ -28,7 +37,16 @@ public class UserService implements IService {
      * @return the user
      */
     public User getByUsername(String username) {
-        return userMapper.getByUsername(username);
+        User cachedUser = userICache.select(username);
+        if (cachedUser!= null) {
+            return cachedUser;
+        }
+        User dbUser = userMapper.getByUsername(username);
+        if (dbUser != null) {
+            userICache.put(username, dbUser);
+            userICache.setExpiry(username, 5);
+        }
+        return dbUser;
     }
 
     /**
@@ -37,8 +55,7 @@ public class UserService implements IService {
      * @return the user
      */
     public User getByUsernameNotNull(String username) {
-        // user must exist in database
-        User user = userMapper.getByUsername(username);
+        User user = getByUsername(username);
         Assert.notNull(user, "3001");
         return user;
     }
@@ -49,7 +66,22 @@ public class UserService implements IService {
      * @return the user
      */
     public User getByID(int id) {
-        return userMapper.getById(id);
+        String username = usernameICache.select(String.valueOf(id));
+        if (username != null) {
+            User cachedUser = userICache.select(username);
+            if (cachedUser != null) {
+                return cachedUser;
+            }
+        }
+        User dbUser = userMapper.getById(id);
+        if (dbUser != null) {
+            username = dbUser.getUsername();
+            usernameICache.put(String.valueOf(id), username);
+            usernameICache.setExpiry(String.valueOf(id), 120);
+            userICache.put(username, dbUser);
+            userICache.setExpiry(username, 5);
+        }
+        return dbUser;
     }
 
     /**
@@ -58,7 +90,7 @@ public class UserService implements IService {
      * @return the user
      */
     public User getByIDNotNull(int id) {
-        User user = userMapper.getById(id);
+        User user = getByID(id);
         Assert.notNull(user, "3001");
         return user;
     }
@@ -83,6 +115,8 @@ public class UserService implements IService {
      */
     public void update(int id, String username, int score) {
         long updated = getByIDNotNull(id).getUpdated();
+        userICache.drop(username);
+        usernameICache.drop(String.valueOf(id));
         userMapper.updateOptimistic(id, username, score, updated, System.currentTimeMillis());
     }
 }

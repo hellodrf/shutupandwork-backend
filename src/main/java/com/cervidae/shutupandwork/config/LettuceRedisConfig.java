@@ -9,6 +9,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.Serializable;
 
+/**
+ * @author AaronDu
+ */
 @Configuration
 public class LettuceRedisConfig {
 
