@@ -90,7 +90,6 @@ public class Session implements Serializable {
      * Using "synchronised" since we are manipulating memory values, and we are not distributed.
      */
 
-
     /**
      * Start the session
      * Pessimistic lock: since this function need only be called EXACTLY ONCE

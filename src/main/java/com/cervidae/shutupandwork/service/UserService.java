@@ -38,7 +38,7 @@ public class UserService implements IService {
      */
     public User getByUsername(String username) {
         User cachedUser = userICache.select(username);
-        if (cachedUser!= null) {
+        if (cachedUser != null) {
             return cachedUser;
         }
         User dbUser = userMapper.getByUsername(username);
