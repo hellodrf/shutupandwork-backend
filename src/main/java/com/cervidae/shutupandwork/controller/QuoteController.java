@@ -44,7 +44,7 @@ public class QuoteController {
         return Response.success(quotes);
     }
 
-    @GetMapping(params = {"count"})
+    @GetMapping(params = {"count", "type"})
     public Response<List<Quote>> getMultipleByType(@RequestParam int count, @RequestParam int type) {
         List<Quote> quotes = quoteService.getRandomQuotesByType(count, type);
         return Response.success(quotes);
