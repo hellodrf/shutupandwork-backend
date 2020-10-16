@@ -23,12 +23,20 @@ public class RankingController {
     }
 
     /**
+     * Get TOP 10 rankings of users, return cached if not expired
+     * @return ranking
+     */
+    @GetMapping
+    public Response<Ranking> get() {
+        return Response.success(rankingService.getRankings(10));
+    }
+
+    /**
      * Get rankings of users, return cached if not expired
-     * @param top length of the rankings
      * @return ranking
      */
     @GetMapping(params = {"top"})
-    public Response<Ranking> get(int top) {
+    public Response<Ranking> getTop(int top) {
         return Response.success(rankingService.getRankings(top));
     }
 
@@ -39,8 +47,8 @@ public class RankingController {
      * @return ranking
      */
     @GetMapping(params = {"top", "forced"})
-    public Ranking getForced(int top) {
-        return rankingService.getLatestRankings(top);
+    public Response<Ranking> getForced(int top) {
+        return Response.success(rankingService.getLatestRankings(top));
     }
 
 }

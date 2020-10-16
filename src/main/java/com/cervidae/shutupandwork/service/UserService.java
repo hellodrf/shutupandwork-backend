@@ -117,10 +117,17 @@ public class UserService implements IService {
      * @param username username of the user
      * @param score new score
      */
-    public void update(int id, String username, int score) {
-        long updated = getByIDNotNull(id).getUpdated();
+    public void updateScore(String username, int score) {
+        long updated = getByUsernameNotNull(username).getUpdated();
         userICache.drop(username);
+        userMapper.updateScoreOptimistic(username, score, updated, System.currentTimeMillis());
+    }
+
+    public void updateUsername(int id, String oldUsername, String username) {
+        long updated = getByIDNotNull(id).getUpdated();
+        Assert.isNull(getByUsername(username), "3005");
+        userICache.drop(oldUsername);
         usernameICache.drop(String.valueOf(id));
-        userMapper.updateOptimistic(id, username, score, updated, System.currentTimeMillis());
+        userMapper.updateUsernameOptimistic(id, username, updated, System.currentTimeMillis());
     }
 }

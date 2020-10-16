@@ -60,6 +60,8 @@ public class Constants {
             put(3002, "User already exists");
             put(3003, "Unauthorized action");
             put(3004, "Invalid credentials");
+            put(3005, "Username already taken");
+            put(3006, "User credentials cannot be empty");
 
             // Session
             put(4001, "Session is not in waiting state");

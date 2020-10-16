@@ -32,8 +32,14 @@ public interface UserMapper extends IMapper {
                   @Param("currentTime") long currentTime, String rule);
 
     @Update("UPDATE USER " +
-            "SET username=#{username}, score=#{score}, updated=#{currentTime} " +
+            "SET username=#{username}, updated=#{currentTime} " +
             "WHERE id=#{id} and updated=#{updated}")
-    void updateOptimistic(@Param("id") int id, @Param("username") String username, @Param("score") int score,
+    void updateUsernameOptimistic(@Param("id") int id, @Param("username") String username,
+                                  @Param("updated") long updated, @Param("currentTime") long currentTime);
+
+    @Update("UPDATE USER " +
+            "SET score=#{score}, updated=#{currentTime} " +
+            "WHERE username=#{username} and updated=#{updated}")
+    void updateScoreOptimistic(@Param("username") String username, @Param("score") int score,
                           @Param("updated") long updated, @Param("currentTime") long currentTime);
 }

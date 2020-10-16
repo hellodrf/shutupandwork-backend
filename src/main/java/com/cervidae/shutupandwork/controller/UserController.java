@@ -28,8 +28,7 @@ public class UserController {
     }
 
     /**
-     * Get a user by username. (idempotent)
-     * Usage: GET /users?username=your_user_name
+     * Get a user by username.
      * @param username target's username
      * @return required user
      */
@@ -47,31 +46,40 @@ public class UserController {
     }
 
     /**
-     * Update a user's data. If user do not exist, add it to the database.
-     * Idempotent action.
-     * Usage: POST /users?username=your_username?score=your_score
-     * @param username target's username
-     * @param score target's score
+     * Update a user's score.
+     * @param newScore target's score
      * @return required user
      */
-    @PostMapping(params = {"username", "score"})
-    public Response<?> update(@RequestParam String username, @RequestParam int score) {
+    @PostMapping(params = {"newScore"})
+    public Response<?> updateScore(@RequestParam int newScore) {
         Subject subject = SecurityUtils.getSubject();
-        User user = userService.getByUsernameNotNull((String) subject.getPrincipal());
-        userService.update(user.getId(), username, score);
+        String username = (String) subject.getPrincipal();
+        userService.updateScore(username, newScore);
         return Response.success(userService.getByUsernameNotNull(username));
+    }
+
+    //@PostMapping(params = {"newUsername"})
+    public Response<?> updateUsername(@RequestParam String newUsername) {
+        Subject subject = SecurityUtils.getSubject();
+        String oldUsername = (String) subject.getPrincipal();
+        User user = userService.getByUsernameNotNull(oldUsername);
+        userService.updateUsername(user.getId(), oldUsername, newUsername);
+        logout();
+        return Response.success(userService.getByUsernameNotNull(newUsername));
     }
 
     @PostMapping(value = "login", params = {"u", "p"})
     public Response<User> login(@RequestParam String u, @RequestParam String p) {
+        Assert.hasText(u, "3006");
+        Assert.hasText(p, "3006");
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(u, p);
         try{
             subject.login(token);
         } catch (AuthenticationException e){
-            return Response.fail();
+            return Response.fail("3004");
         }
-        if (!subject.isAuthenticated()) return Response.fail();
+        if (!subject.isAuthenticated()) return Response.fail("3004");
         else return Response.success(userService.getByUsername(u));
     }
 
@@ -85,6 +93,8 @@ public class UserController {
 
     @PostMapping(value = "register", params = {"u", "p"})
     public Response<User> register(@RequestParam String u, @RequestParam String p) {
+        Assert.hasText(u, "3006");
+        Assert.hasText(p, "3006");
         User user = userService.register(u, p);
         Assert.notNull(user, "3002");
         return Response.success(user);
