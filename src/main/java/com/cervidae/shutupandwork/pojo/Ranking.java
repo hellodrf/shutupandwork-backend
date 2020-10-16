@@ -19,7 +19,7 @@ public class Ranking implements Serializable {
     public static final long serialVersionUID = 6813392678220161008L;
 
     @Setter(AccessLevel.PRIVATE)
-    private Map<Integer, User> rankMap;
+    private Map<Integer, ResponseUser> rankMap;
 
     private int top;
 
@@ -37,7 +37,7 @@ public class Ranking implements Serializable {
         this.top = users.length;
         this.rankMap = new HashMap<>();
         for (int i = 0; i < top; i++) {
-            rankMap.put(i+1, users[i]);
+            rankMap.put(i+1, new ResponseUser(users[i]));
         }
     }
 

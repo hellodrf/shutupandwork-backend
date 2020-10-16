@@ -1,5 +1,6 @@
 package com.cervidae.shutupandwork.controller;
 
+import com.cervidae.shutupandwork.pojo.ResponseUser;
 import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.service.UserService;
 import com.cervidae.shutupandwork.util.Response;
@@ -34,16 +35,16 @@ public class UserController {
      * @return required user
      */
     @GetMapping(params = {"username"})
-    public Response<User> get(@RequestParam String username) {
+    public Response<ResponseUser> get(@RequestParam String username) {
         User user = userService.getByUsernameNotNull(username);
-        return Response.success(user);
+        return Response.success(new ResponseUser(user));
     }
 
     @GetMapping
-    public Response<User> get() {
+    public Response<ResponseUser> get() {
         Subject subject = SecurityUtils.getSubject();
         User user = userService.getByUsernameNotNull((String) subject.getPrincipal());
-        return Response.success(user);
+        return Response.success(new ResponseUser(user));
     }
 
     /**
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping(value = "login", params = {"u", "p"})
-    public Response<User> login(@RequestParam String u, @RequestParam String p) {
+    public Response<ResponseUser> login(@RequestParam String u, @RequestParam String p) {
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(u, p);
         try{
@@ -72,7 +73,7 @@ public class UserController {
             return Response.fail();
         }
         if (!subject.isAuthenticated()) return Response.fail();
-        else return Response.success(userService.getByUsername(u));
+        else return Response.success(new ResponseUser(userService.getByUsername(u)));
     }
 
     @PostMapping(value = "logout")
@@ -84,10 +85,10 @@ public class UserController {
     }
 
     @PostMapping(value = "register", params = {"u", "p"})
-    public Response<User> register(@RequestParam String u, @RequestParam String p) {
+    public Response<ResponseUser> register(@RequestParam String u, @RequestParam String p) {
         User user = userService.register(u, p);
         Assert.notNull(user, "3002");
-        return Response.success(user);
+        return Response.success(new ResponseUser(userService.getByUsername(u)));
     }
 
     @GetMapping(value = "403")
