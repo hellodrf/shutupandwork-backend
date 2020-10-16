@@ -7,6 +7,7 @@ import com.cervidae.shutupandwork.service.UserService;
 import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.util.Response;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,11 @@ public class SessionController {
     @GetMapping(params = {"sessionID"})
     public Response<Session> get(@RequestParam String sessionID) {
         Session session = sessionService.getSessionNotNull(sessionID);
+        Subject subject = SecurityUtils.getSubject();
+        String username = (String) subject.getPrincipal();
+        if (!session.containsUser(username)) {
+            throw new UnauthenticatedException();
+        }
         return Response.success(session);
     }
 
@@ -57,7 +63,7 @@ public class SessionController {
 
     /**
      * Leave the specified session. Will fail the session if session is in active status
-     * Usage: POST /sessions?sessionID=your_sessionID?leave
+     * Usage: POST /sessions?sessionID=your_sessionID&leave
      * @param sessionID ID of the session
      */
     @PostMapping(params = {"sessionID", "leave"})
@@ -72,7 +78,7 @@ public class SessionController {
     /**
      * Start the session
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
-     * Usage: POST /sessions?sessionID=your_sessionID?target=your_target?start
+     * Usage: POST /sessions?sessionID=your_sessionID&target=your_target?start
      * @param sessionID ID of the session
      * @param target the target of the session
      * @return the session
@@ -85,7 +91,7 @@ public class SessionController {
     /**
      * Mark the session as succeed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
-     * Usage: POST /sessions?sessionID=your_sessionID?success
+     * Usage: POST /sessions?sessionID=your_sessionID&success
      * @param sessionID ID of the session
      * @return the session
      */

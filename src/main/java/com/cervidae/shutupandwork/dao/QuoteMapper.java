@@ -21,6 +21,13 @@ public interface QuoteMapper extends IMapper {
             "ORDER BY QUOTE.id LIMIT 1")
     Quote getRandom();
 
+    @Select("SELECT QUOTE.* FROM QUOTE " +
+            "JOIN (SELECT ROUND(RAND()*(SELECT MAX(id) FROM QUOTE)) AS id) AS t2 " +
+            "ON QUOTE.id >= t2.id " +
+            "WHERE QUOTE.type = #{type} " +
+            "ORDER BY QUOTE.id LIMIT 1")
+    Quote getRandomByType(@Param("type") int type);
+
     @Insert("INSERT INTO QUOTE VALUES (NULL, #{quote}, #{type})")
     void add(@Param("quote") String quote, @Param("type") int type);
 

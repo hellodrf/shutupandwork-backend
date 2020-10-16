@@ -14,7 +14,7 @@ public class Constants {
     public static final int RANKING_CACHE_EXPIRY = 5000;
 
     /**
-     * Admin password (may soon be deprecated)
+     * Admin password (!deprecated)
      */
     public static final String ADMIN_PASSWORD = "12345";
 
@@ -53,6 +53,7 @@ public class Constants {
 
             // Quote
             put(2001, "Quote must not be empty");
+            put(2002, "Cannot find specified quote(s) in database");
 
             // User
             put(3001, "Cannot find user in database");

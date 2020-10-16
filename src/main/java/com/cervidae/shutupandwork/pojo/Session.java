@@ -85,6 +85,9 @@ public class Session implements Serializable {
     }
 
 
+    public boolean containsUser(String username) {
+        return userList.containsKey(username);
+    }
     /*
      * Below are Pessimistic locked actions.
      * Using "synchronised" since we are manipulating memory values, and we are not distributed.

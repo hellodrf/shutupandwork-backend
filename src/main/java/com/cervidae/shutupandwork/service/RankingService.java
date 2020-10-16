@@ -15,13 +15,13 @@ public class RankingService implements IService {
 
     final RankingMapper rankingMapper;
 
-    final ICache<Ranking> iCache;
+    final ICache<Ranking> rankingICache;
 
     @Autowired
-    public RankingService(RankingMapper rankingMapper, ICache<Ranking> iCache) {
+    public RankingService(RankingMapper rankingMapper, ICache<Ranking> rankingICache) {
         this.rankingMapper = rankingMapper;
-        this.iCache = iCache;
-        this.iCache.setIdentifier(1);
+        this.rankingICache = rankingICache;
+        this.rankingICache.setIdentifier(1);
     }
 
     /**
@@ -31,10 +31,10 @@ public class RankingService implements IService {
      */
     public Ranking getRankings(int top) {
         String key = String.valueOf(top);
-        Ranking cache = iCache.select(key);
+        Ranking cache = rankingICache.select(key);
         if (cache == null || cache.isExpired(Constants.RANKING_CACHE_EXPIRY)) {
             Ranking latest = getLatestRankings(top);
-            iCache.put(key, latest);
+            rankingICache.put(key, latest);
             return latest;
         } else {
             return cache;

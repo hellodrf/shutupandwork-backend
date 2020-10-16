@@ -60,6 +60,10 @@ public class SessionService implements IService {
         logger.info("Session GC Completed: dropped " + i + " sessions");
     }
 
+    public void isUserInSession(String sessionID) {
+
+    }
+
     /**
      * Join the specified session. If not exist, create a session
      * @param user the user
@@ -91,7 +95,7 @@ public class SessionService implements IService {
      */
     public void leave(User user, String sessionID) {
         validateID(sessionID);
-        Session session = getSession(sessionID);
+        Session session = getSessionNotNull(sessionID);
         if (session.getUserList().containsKey(user.getUsername())) {
             if (session.getStatus()== Session.Status.ACTIVE) {
                 session.fail(user);

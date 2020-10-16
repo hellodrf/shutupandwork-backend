@@ -1,5 +1,6 @@
 package com.cervidae.shutupandwork.service;
 
+import com.cervidae.shutupandwork.dao.ICache;
 import com.cervidae.shutupandwork.dao.QuoteMapper;
 import com.cervidae.shutupandwork.pojo.Quote;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,16 @@ import java.util.List;
  */
 @Service
 public class QuoteService implements IService {
+
     private final QuoteMapper quoteMapper;
 
+    private final ICache<Integer> integerICache;
+
     @Autowired
-    public QuoteService(QuoteMapper quoteMapper) {
+    public QuoteService(QuoteMapper quoteMapper, ICache<Integer> integerICache) {
         this.quoteMapper = quoteMapper;
+        this.integerICache = integerICache;
+        integerICache.setIdentifier(7);
     }
 
     /**
@@ -29,7 +35,7 @@ public class QuoteService implements IService {
      */
     public List<Quote> getRandomQuotes(int count) throws DataAccessException {
         List<Quote> quotes = new ArrayList<>();
-        count = Math.min(count, quoteMapper.count());
+        count = Math.min(count, getCount());
         for (int i=0; i < count; i++) {
             Quote next = null;
             while (next==null||quotes.contains(next)) {
@@ -37,10 +43,15 @@ public class QuoteService implements IService {
             }
             quotes.add(next);
         }
+        Assert.notEmpty(quotes, "2002");
         return quotes;
     }
 
     public Quote getQuoteByID(int id) {
+        return quoteMapper.getByID(id);
+    }
+
+    public Quote getRandomQuotesByType(int id, int count) {
         return quoteMapper.getByID(id);
     }
 
@@ -60,7 +71,19 @@ public class QuoteService implements IService {
      */
     public Quote deleteQuote(int id) {
         Quote quote = quoteMapper.getByID(id);
+        Assert.notNull(quote, "2002");
         quoteMapper.delete(id);
         return quote;
+    }
+
+    private int getCount() {
+        if (integerICache.contains("quoteCount")) {
+            return integerICache.select("quoteCount");
+        } else {
+            int count = quoteMapper.count();
+            integerICache.put("quoteCount", count);
+            integerICache.setExpiry("quoteCount", 15);
+            return count;
+        }
     }
 }

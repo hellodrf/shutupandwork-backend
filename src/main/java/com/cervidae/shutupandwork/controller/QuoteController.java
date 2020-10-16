@@ -45,6 +45,16 @@ public class QuoteController {
     }
 
     /**
+     * Get a random quote
+     * @return a quote
+     */
+    @GetMapping(params = {"id"})
+    public Response<Quote> getByID(int id) {
+        Quote quote = quoteService.getQuoteByID(id);
+        return Response.success(quote);
+    }
+
+    /**
      * Admin only: add a quote to database
      * @param quote the quote
      * @param type type of quote
