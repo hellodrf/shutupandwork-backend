@@ -37,7 +37,7 @@ public class IRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         String username = (String) principalCollection.getPrimaryPrincipal();
-        User user = userService.getByUsername(username);
+        User user = userService.getByUsernameNoCache(username);
         if (user != null) {
             String role = user.getRole();
             if (!role.equals("user")) {
@@ -65,7 +65,7 @@ public class IRealm extends AuthorizingRealm {
             throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         String username = token.getUsername();
-        User user = userService.getByUsername(username);
+        User user = userService.getByUsernameNoCache(username);
 
         if (user != null) {
             // add salt

@@ -14,7 +14,7 @@ public class Constants {
     public static final int RANKING_CACHE_EXPIRY = 5000;
 
     /**
-     * Admin password (!deprecated)
+     * Admin password (!deprecated!)
      */
     public static final String ADMIN_PASSWORD = "12345";
 

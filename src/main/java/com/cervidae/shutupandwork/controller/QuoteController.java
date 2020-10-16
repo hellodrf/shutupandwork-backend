@@ -44,12 +44,18 @@ public class QuoteController {
         return Response.success(quotes);
     }
 
+    @GetMapping(params = {"count"})
+    public Response<List<Quote>> getMultipleByType(@RequestParam int count, @RequestParam int type) {
+        List<Quote> quotes = quoteService.getRandomQuotesByType(count, type);
+        return Response.success(quotes);
+    }
+
     /**
-     * Get a random quote
+     * Get a quote by id
      * @return a quote
      */
     @GetMapping(params = {"id"})
-    public Response<Quote> getByID(int id) {
+    public Response<Quote> getByID(@RequestParam int id) {
         Quote quote = quoteService.getQuoteByID(id);
         return Response.success(quote);
     }
@@ -76,4 +82,6 @@ public class QuoteController {
         Quote quote = quoteService.deleteQuote(id);
         return Response.success(quote);
     }
+
+
 }

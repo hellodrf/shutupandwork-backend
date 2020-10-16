@@ -60,6 +60,10 @@ public class UserService implements IService {
         return user;
     }
 
+    public User getByUsernameNoCache(String username) {
+        return userMapper.getByUsername(username);
+    }
+
     /**
      * Get user by id, will return null when user does not exist.
      * @param id id of the user

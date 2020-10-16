@@ -4,7 +4,6 @@ import com.cervidae.shutupandwork.dao.ICache;
 import com.cervidae.shutupandwork.dao.QuoteMapper;
 import com.cervidae.shutupandwork.pojo.Quote;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -21,10 +20,13 @@ public class QuoteService implements IService {
 
     private final ICache<Integer> integerICache;
 
+    private final ICache<ArrayList<Quote>> quoteICache;
+
     @Autowired
-    public QuoteService(QuoteMapper quoteMapper, ICache<Integer> integerICache) {
+    public QuoteService(QuoteMapper quoteMapper, ICache<Integer> integerICache, ICache<ArrayList<Quote>> quoteICache) {
         this.quoteMapper = quoteMapper;
         this.integerICache = integerICache;
+        this.quoteICache = quoteICache;
         integerICache.setIdentifier(7);
     }
 
@@ -33,12 +35,12 @@ public class QuoteService implements IService {
      * @param count number of quotes to get
      * @return list of quotes
      */
-    public List<Quote> getRandomQuotes(int count) throws DataAccessException {
+    public List<Quote> getRandomQuotes(int count) {
         List<Quote> quotes = new ArrayList<>();
         count = Math.min(count, getCount());
         for (int i=0; i < count; i++) {
             Quote next = null;
-            while (next==null||quotes.contains(next)) {
+            while (next == null || quotes.contains(next)) {
                 next = quoteMapper.getRandom();
             }
             quotes.add(next);
@@ -51,8 +53,18 @@ public class QuoteService implements IService {
         return quoteMapper.getByID(id);
     }
 
-    public Quote getRandomQuotesByType(int id, int count) {
-        return quoteMapper.getByID(id);
+    public List<Quote> getRandomQuotesByType(int type, int count) {
+        List<Quote> quotes = new ArrayList<>();
+        count = Math.min(count, getCount());
+        for (int i=0; i < count; i++) {
+            Quote next = null;
+            while (next == null || quotes.contains(next)) {
+                next = quoteMapper.getRandomByType(type);
+            }
+            quotes.add(next);
+        }
+        Assert.notEmpty(quotes, "2002");
+        return quotes;
     }
 
     /**
