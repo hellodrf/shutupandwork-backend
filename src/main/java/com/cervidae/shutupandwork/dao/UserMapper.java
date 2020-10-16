@@ -4,6 +4,8 @@ import com.cervidae.shutupandwork.pojo.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 /**
  * @author AaronDu
  */
@@ -25,9 +27,9 @@ public interface UserMapper extends IMapper {
     void add(@Param("username") String username, @Param("score") int score, @Param("currentTime") long currentTime);
 
     @Insert("INSERT INTO USER " +
-            "VALUES (NULL, #{username}, 0, #{currentTime}, #{password}, #{role})")
+            "VALUES (NULL, #{username}, 0, #{currentTime}, #{password}, #{rule})")
     void register(@Param("username") String username, @Param("password") String password,
-                  @Param("currentTime") long currentTime, String role);
+                  @Param("currentTime") long currentTime, String rule);
 
     @Update("UPDATE USER " +
             "SET username=#{username}, score=#{score}, updated=#{currentTime} " +

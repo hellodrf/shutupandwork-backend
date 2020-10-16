@@ -66,6 +66,7 @@ public class IRealm extends AuthorizingRealm {
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         String username = token.getUsername();
         User user = userService.getByUsername(username);
+
         if (user != null) {
             // add salt
             ByteSource salt = ByteSource.Util.bytes(username);

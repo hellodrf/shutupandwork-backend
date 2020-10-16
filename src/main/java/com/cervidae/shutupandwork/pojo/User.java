@@ -21,10 +21,13 @@ public class User implements Serializable {
 
     private int score;
 
+    @JsonIgnore
     private String role;
 
+    @JsonIgnore
     private String password;
 
+    @JsonIgnore
     private long updated;
 
 }
