@@ -27,7 +27,6 @@ public class User implements Serializable {
     @JsonIgnore
     private String password;
 
-    @JsonIgnore
     private long updated;
 
 }
