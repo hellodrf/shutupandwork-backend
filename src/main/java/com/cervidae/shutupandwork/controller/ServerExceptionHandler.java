@@ -1,21 +1,25 @@
 package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.util.Response;
+import lombok.SneakyThrows;
 import org.apache.shiro.authz.UnauthenticatedException;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.dao.DataAccessException;
+import org.springframework.lang.NonNull;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 /**
  * @author AaronDu
  */
 @RestControllerAdvice
-public class ServerExceptionHandler {
+public class ServerExceptionHandler implements AsyncUncaughtExceptionHandler {
 
     /* AOP exception handlers */
 
@@ -76,4 +80,9 @@ public class ServerExceptionHandler {
         return Response.fail("1404");
     }
 
+    @SneakyThrows
+    @Override
+    public void handleUncaughtException(Throwable throwable, @NonNull Method method, @NonNull Object... objects) {
+        throw throwable;
+    }
 }

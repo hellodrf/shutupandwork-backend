@@ -4,7 +4,9 @@ package com.cervidae.shutupandwork.service;
 import com.cervidae.shutupandwork.dao.ICache;
 import com.cervidae.shutupandwork.dao.UserMapper;
 import com.cervidae.shutupandwork.pojo.User;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +34,17 @@ public class UserService implements IService {
     }
 
     /**
+     * Get current logged in user's username
+     * @return username
+     */
+    public String getCurrentUsername() {
+        Subject subject = SecurityUtils.getSubject();
+        return (String) subject.getPrincipal();
+    }
+
+    /**
      * Get user by username, will return null when user does not exist.
-     * @param username username of the user
+     * @param username username
      * @return the user
      */
     public User getByUsername(String username) {
@@ -51,7 +62,7 @@ public class UserService implements IService {
 
     /**
      * Get user by username, will throw IllegalArgumentException when user does not exist.
-     * @param username username of the user
+     * @param username username
      * @return the user
      */
     public User getByUsernameNotNull(String username) {
@@ -66,7 +77,7 @@ public class UserService implements IService {
 
     /**
      * Get user by id, will return null when user does not exist.
-     * @param id id of the user
+     * @param id id
      * @return the user
      */
     public User getByID(int id) {
@@ -90,7 +101,7 @@ public class UserService implements IService {
 
     /**
      * Get user by username, will throw IllegalArgumentException when user does not exist.
-     * @param id id of the user
+     * @param id id
      * @return the user
      */
     public User getByIDNotNull(int id) {
@@ -99,6 +110,12 @@ public class UserService implements IService {
         return user;
     }
 
+    /**
+     * Register a new user into database
+     * @param username username
+     * @param password password
+     * @return the new user
+     */
     public User register(String username, String password) {
         ByteSource salt = ByteSource.Util.bytes(username);
         String hashedPassword = new SimpleHash("MD5", password, salt, 1024).toHex();
@@ -113,8 +130,8 @@ public class UserService implements IService {
     }
 
     /**
-     * Update a user's score (with optimistic lock)
-     * @param username username of the user
+     * Update a user's score
+     * @param username username
      * @param score new score
      */
     public void updateScore(String username, int score) {
@@ -123,6 +140,7 @@ public class UserService implements IService {
         userMapper.updateScoreOptimistic(username, score, updated, System.currentTimeMillis());
     }
 
+    @Deprecated
     public void updateUsername(int id, String oldUsername, String username) {
         long updated = getByIDNotNull(id).getUpdated();
         Assert.isNull(getByUsername(username), "3005");

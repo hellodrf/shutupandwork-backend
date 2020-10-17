@@ -5,6 +5,7 @@ import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.util.Constants;
 import com.cervidae.shutupandwork.dao.ICache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -43,25 +44,24 @@ public class SessionService implements IService {
      * Cron task scheduled 3am everyday
      */
     @Scheduled(cron = "00 03 * * * ?")
+    @Async
     public void collectExpiredSessions() {
         int i = 0;
         Logger logger = Logger.getLogger(this.getClass().getName());
-        logger.info("Starting Session GC");
+        logger.info("Starting Session GC...");
         Set<String> sessionIDs = iCache.getKeySet();
-        for (String id : sessionIDs) {
-            Session session = iCache.select(id);
-            if (session.getStatus() != Session.Status.ACTIVE &&
-                    System.currentTimeMillis() - session.getCreated() > Constants.SESSION_EXPIRY) {
-                iCache.drop(id);
-                logger.info("Session GC: dropped session " + id);
-                i++;
+        if (!sessionIDs.isEmpty()) {
+            for (String id : sessionIDs) {
+                Session session = iCache.select(id);
+                if (session != null && session.getStatus() != Session.Status.ACTIVE &&
+                        System.currentTimeMillis() - session.getCreated() > Constants.SESSION_EXPIRY) {
+                    iCache.drop(id);
+                    logger.info("Session GC: dropped expired session " + id);
+                    i++;
+                }
             }
         }
         logger.info("Session GC Completed: dropped " + i + " sessions");
-    }
-
-    public void isUserInSession(String sessionID) {
-
     }
 
     /**

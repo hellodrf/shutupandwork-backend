@@ -28,6 +28,16 @@ public class UserController {
     }
 
     /**
+     * Get current logged-in user
+     * @return the user
+     */
+    @GetMapping
+    public Response<User> get() {
+        User user = userService.getByUsernameNotNull(userService.getCurrentUsername());
+        return Response.success(user);
+    }
+
+    /**
      * Get a user by username.
      * @param username target's username
      * @return required user
@@ -38,13 +48,6 @@ public class UserController {
         return Response.success(user);
     }
 
-    @GetMapping
-    public Response<User> get() {
-        Subject subject = SecurityUtils.getSubject();
-        User user = userService.getByUsernameNotNull((String) subject.getPrincipal());
-        return Response.success(user);
-    }
-
     /**
      * Update a user's score.
      * @param newScore target's score
@@ -52,22 +55,17 @@ public class UserController {
      */
     @PostMapping(params = {"newScore"})
     public Response<?> updateScore(@RequestParam int newScore) {
-        Subject subject = SecurityUtils.getSubject();
-        String username = (String) subject.getPrincipal();
+        String username = userService.getCurrentUsername();
         userService.updateScore(username, newScore);
         return Response.success(userService.getByUsernameNotNull(username));
     }
 
-    //@PostMapping(params = {"newUsername"})
-    public Response<?> updateUsername(@RequestParam String newUsername) {
-        Subject subject = SecurityUtils.getSubject();
-        String oldUsername = (String) subject.getPrincipal();
-        User user = userService.getByUsernameNotNull(oldUsername);
-        userService.updateUsername(user.getId(), oldUsername, newUsername);
-        logout();
-        return Response.success(userService.getByUsernameNotNull(newUsername));
-    }
-
+    /**
+     * Login with credentials
+     * @param u username
+     * @param p password
+     * @return the user
+     */
     @PostMapping(value = "login", params = {"u", "p"})
     public Response<User> login(@RequestParam String u, @RequestParam String p) {
         Assert.hasText(u, "3006");
@@ -83,25 +81,54 @@ public class UserController {
         else return Response.success(userService.getByUsername(u));
     }
 
+    /**
+     * Logout
+     * @return a empty success response
+     */
     @PostMapping(value = "logout")
     public Response<?> logout() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        if (subject.isAuthenticated()) return Response.fail();
+        if (subject.isAuthenticated()) return Response.fail("3007");
         else return Response.success();
     }
 
+    /**
+     * Register with credentials, will auto-login
+     * @param u username
+     * @param p password
+     * @return the user
+     */
     @PostMapping(value = "register", params = {"u", "p"})
     public Response<User> register(@RequestParam String u, @RequestParam String p) {
         Assert.hasText(u, "3006");
         Assert.hasText(p, "3006");
         User user = userService.register(u, p);
         Assert.notNull(user, "3002");
-        return Response.success(user);
+        return login(u, p);
     }
 
+    /**
+     * Redirect 403 Unauthorized errors
+     */
     @GetMapping(value = "403")
     public void unauthorized() {
         throw new UnauthenticatedException();
+    }
+
+    /**
+     * DEPRECATED! API CLOSED!
+     * Update a user's username
+     * @param newUsername new username
+     * @return the user
+     */
+    @Deprecated
+    //@PostMapping(params = {"newUsername"})
+    public Response<?> updateUsername(@RequestParam String newUsername) {
+        String oldUsername = userService.getCurrentUsername();
+        User user = userService.getByUsernameNotNull(oldUsername);
+        userService.updateUsername(user.getId(), oldUsername, newUsername);
+        logout();
+        return Response.success(userService.getByUsernameNotNull(newUsername));
     }
 }

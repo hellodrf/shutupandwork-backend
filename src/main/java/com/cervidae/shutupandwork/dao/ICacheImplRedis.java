@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 @Service
 @Primary
@@ -69,7 +70,7 @@ public class ICacheImplRedis<V extends Serializable> implements ICache<Serializa
     @Override
     public Set<String> getKeySet() {
         Set<String> keys = new HashSet<>();
-        for (String key: Objects.requireNonNull(serializableRedisTemplate.keys(prefix + "#.*"))) {
+        for (String key: Objects.requireNonNull(serializableRedisTemplate.keys(prefix + "#*"))) {
             keys.add(removePrefix(key));
         }
         return keys;
@@ -86,12 +87,12 @@ public class ICacheImplRedis<V extends Serializable> implements ICache<Serializa
     }
 
     private String removePrefix(String prefixedKey) {
-        String pf = prefixedKey.substring(0, prefix/10+1);
+        String pf = prefixedKey.substring(0, prefix/10+2);
         if (!pf.equals(prefix + "#")) {
             return "";
         }
         StringBuilder stringBuilder = new StringBuilder(prefixedKey);
-        stringBuilder.delete(0, prefix/10+1);
+        stringBuilder.delete(0, prefix/10+2);
         return stringBuilder.toString();
     }
 }

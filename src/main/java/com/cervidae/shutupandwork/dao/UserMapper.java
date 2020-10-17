@@ -31,6 +31,7 @@ public interface UserMapper extends IMapper {
     void register(@Param("username") String username, @Param("password") String password,
                   @Param("currentTime") long currentTime, String rule);
 
+    @Deprecated
     @Update("UPDATE USER " +
             "SET username=#{username}, updated=#{currentTime} " +
             "WHERE id=#{id} and updated=#{updated}")

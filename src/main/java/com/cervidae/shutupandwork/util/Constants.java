@@ -62,6 +62,7 @@ public class Constants {
             put(3004, "Invalid credentials");
             put(3005, "Username already taken");
             put(3006, "User credentials cannot be empty");
+            put(3007, "Failed to logout, please contact system admin");
 
             // Session
             put(4001, "Session is not in waiting state");
