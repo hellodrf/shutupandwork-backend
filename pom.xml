@@ -82,6 +82,12 @@
             <artifactId>shiro-redis-spring-boot-starter</artifactId>
             <version>3.3.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>7.0.0.Alpha6</version>
+        </dependency>
     </dependencies>
 
     <build>

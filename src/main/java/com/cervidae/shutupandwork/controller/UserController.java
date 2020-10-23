@@ -2,6 +2,7 @@ package com.cervidae.shutupandwork.controller;
 
 import com.cervidae.shutupandwork.pojo.User;
 import com.cervidae.shutupandwork.service.UserService;
+import com.cervidae.shutupandwork.pojo.AuthToken;
 import com.cervidae.shutupandwork.util.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -10,6 +11,7 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -81,6 +83,11 @@ public class UserController {
         else return Response.success(userService.getByUsername(u));
     }
 
+    @PostMapping(value = "login")
+    public Response<User> loginWithBody(@RequestBody @Validated AuthToken authToken) {
+        return login(authToken.getU(), authToken.getDecodedP());
+    }
+
     /**
      * Logout
      * @return a empty success response
@@ -108,27 +115,16 @@ public class UserController {
         return login(u, p);
     }
 
+    @PostMapping(value = "login")
+    public Response<User> registerWithBody(@RequestBody @Validated AuthToken authToken) {
+        return register(authToken.getU(), authToken.getDecodedP());
+    }
+
     /**
      * Redirect 403 Unauthorized errors
      */
     @GetMapping(value = "403")
     public void unauthorized() {
         throw new UnauthenticatedException();
-    }
-
-    /**
-     * DEPRECATED! API CLOSED!
-     * Update a user's username
-     * @param newUsername new username
-     * @return the user
-     */
-    @Deprecated
-    //@PostMapping(params = {"newUsername"})
-    public Response<?> updateUsername(@RequestParam String newUsername) {
-        String oldUsername = userService.getCurrentUsername();
-        User user = userService.getByUsernameNotNull(oldUsername);
-        userService.updateUsername(user.getId(), oldUsername, newUsername);
-        logout();
-        return Response.success(userService.getByUsernameNotNull(newUsername));
     }
 }

@@ -35,8 +35,13 @@ public class Response<T> implements Serializable {
         this.payload = payload;
         this.success = success;
         if (code != null) {
-            this.code = Integer.parseInt(code);
-            this.message = Constants.ERROR_CODE_MAP.get(this.code);
+            try {
+                this.code = Integer.parseInt(code);
+                this.message = Constants.ERROR_CODE_MAP.get(this.code);
+            } catch (NumberFormatException e) {
+                this.message = code;
+                this.code = 1002;
+            }
         }
         this.timeStamp = System.currentTimeMillis();
     }

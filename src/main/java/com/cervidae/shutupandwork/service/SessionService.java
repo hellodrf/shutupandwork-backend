@@ -19,15 +19,15 @@ import java.util.logging.Logger;
 @Service
 public class SessionService implements IService {
 
-    final ICache<Session> iCache;
+    final ICache<Session> sessionICache;
 
     final UserService userService;
 
     @Autowired
-    public SessionService(ICache<Session> iCache, UserService userService) {
+    public SessionService(ICache<Session> sessionICache, UserService userService) {
         this.userService = userService;
-        this.iCache = iCache;
-        this.iCache.setIdentifier(2);
+        this.sessionICache = sessionICache;
+        this.sessionICache.setIdentifier(2);
     }
 
     /**
@@ -49,13 +49,13 @@ public class SessionService implements IService {
         int i = 0;
         Logger logger = Logger.getLogger(this.getClass().getName());
         logger.info("Starting Session GC...");
-        Set<String> sessionIDs = iCache.getKeySet();
+        Set<String> sessionIDs = sessionICache.getKeySet();
         if (!sessionIDs.isEmpty()) {
             for (String id : sessionIDs) {
-                Session session = iCache.select(id);
+                Session session = sessionICache.select(id);
                 if (session != null && session.getStatus() != Session.Status.ACTIVE &&
                         System.currentTimeMillis() - session.getCreated() > Constants.SESSION_EXPIRY) {
-                    iCache.drop(id);
+                    sessionICache.drop(id);
                     logger.info("Session GC: dropped expired session " + id);
                     i++;
                 }
@@ -73,8 +73,8 @@ public class SessionService implements IService {
     public Session join(User user, String sessionID) {
         validateID(sessionID);
         Session session;
-        if (iCache.contains(sessionID)) {
-            session = iCache.select(sessionID);
+        if (sessionICache.contains(sessionID)) {
+            session = sessionICache.select(sessionID);
             if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
                 session.reset();
             } else if (session.getStatus() != Session.Status.WAITING) {
@@ -84,7 +84,7 @@ public class SessionService implements IService {
         } else {
             session = new Session(user, sessionID);
         }
-        iCache.put(sessionID, session);
+        sessionICache.put(sessionID, session);
         return session;
     }
 
@@ -103,7 +103,7 @@ public class SessionService implements IService {
                 session.removeUser(user);
             }
         }
-        iCache.put(sessionID, session);
+        sessionICache.put(sessionID, session);
     }
 
     /**
@@ -112,7 +112,7 @@ public class SessionService implements IService {
      * @return the session
      */
     public Session getSession(String sessionID) {
-        return iCache.select(sessionID);
+        return sessionICache.select(sessionID);
     }
 
     /**
@@ -121,36 +121,37 @@ public class SessionService implements IService {
      * @return the session
      */
     public Session getSessionNotNull(String sessionID) {
-        Assert.isTrue(iCache.contains(sessionID), "4004");
-        return iCache.select(sessionID);
+        Assert.isTrue(sessionICache.contains(sessionID), "4004");
+        return sessionICache.select(sessionID);
     }
 
     /**
-     * Start the session (Pessimistic lock, see Session)
+     * Start the session
+     * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param sessionID ID of the session
      * @param target the target of the session
      */
     public Session start(String sessionID, long target) {
         validateID(sessionID);
         Session session = getSessionNotNull(sessionID).start(target);
-        iCache.put(sessionID, session);
+        sessionICache.put(sessionID, session);
         return session;
     }
 
     /**
-     * Mark the session as succeed (Pessimistic lock, see Session)
+     * Mark the session as succeed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param sessionID ID of the session
      */
     public Session success(String sessionID) {
         validateID(sessionID);
         Session session = getSessionNotNull(sessionID).success();
-        iCache.put(sessionID, session);
+        sessionICache.put(sessionID, session);
         return session;
     }
 
     /**
-     * Mark the session as failed (Pessimistic lock, see Session)
+     * Mark the session as failed
      * Pessimistic lock: since this function need only be called EXACTLY ONCE
      * @param sessionID ID of the session
      * @param username user to blame
@@ -159,13 +160,13 @@ public class SessionService implements IService {
         validateID(sessionID);
         User user = userService.getByUsername(username);
         Session session = getSessionNotNull(sessionID).fail(user);
-        iCache.put(sessionID, session);
+        sessionICache.put(sessionID, session);
         return session;
     }
 
     /**
      * Reset a session to WAITING state.
-     * It must be in SUCCESS or FAIL state, but WAITING is tolerated (no change inflicted)
+     * must be in SUCCESS or FAIL state, however WAITING is tolerated
      * @param sessionID ID of the session
      * @return the session
      */
@@ -173,7 +174,7 @@ public class SessionService implements IService {
         Session session = getSessionNotNull(sessionID);
         if (session.getStatus() == Session.Status.SUCCESS || session.getStatus() == Session.Status.FAIL) {
             session.reset();
-            iCache.put(sessionID, session);
+            sessionICache.put(sessionID, session);
         } else if (session.getStatus() != Session.Status.WAITING) {
             // waiting state is tolerated
             throw new IllegalArgumentException("4003");

@@ -91,6 +91,7 @@ public class UserService implements IService {
         User dbUser = userMapper.getById(id);
         if (dbUser != null) {
             username = dbUser.getUsername();
+            // update caches
             usernameICache.put(String.valueOf(id), username);
             usernameICache.setExpiry(String.valueOf(id), 120);
             userICache.put(username, dbUser);
@@ -119,7 +120,6 @@ public class UserService implements IService {
     public User register(String username, String password) {
         ByteSource salt = ByteSource.Util.bytes(username);
         String hashedPassword = new SimpleHash("MD5", password, salt, 1024).toHex();
-
         // user must not exist in database
         User user = userMapper.getByUsername(username);
         Assert.isNull(user, "3002");
@@ -136,16 +136,7 @@ public class UserService implements IService {
      */
     public void updateScore(String username, int score) {
         long updated = getByUsernameNotNull(username).getUpdated();
-        userICache.drop(username);
         userMapper.updateScoreOptimistic(username, score, updated, System.currentTimeMillis());
-    }
-
-    @Deprecated
-    public void updateUsername(int id, String oldUsername, String username) {
-        long updated = getByIDNotNull(id).getUpdated();
-        Assert.isNull(getByUsername(username), "3005");
-        userICache.drop(oldUsername);
-        usernameICache.drop(String.valueOf(id));
-        userMapper.updateUsernameOptimistic(id, username, updated, System.currentTimeMillis());
+        userICache.drop(username);
     }
 }
