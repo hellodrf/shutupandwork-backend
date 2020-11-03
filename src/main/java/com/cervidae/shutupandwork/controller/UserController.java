@@ -115,7 +115,7 @@ public class UserController {
         return login(u, p);
     }
 
-    @PostMapping(value = "login")
+    @PostMapping(value = "register")
     public Response<User> registerWithBody(@RequestBody @Validated AuthToken authToken) {
         return register(authToken.getU(), authToken.getDecodedP());
     }
