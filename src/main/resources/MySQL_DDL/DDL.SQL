@@ -17,6 +17,8 @@ create table User
     username varchar(15) not null,
     score int default 0 not null,
     updated bigint default 0 null,
+    password varchar(50) not null,
+    role varchar(10) null,
     constraint Users_username_uindex
         unique (username)
 );
@@ -29,4 +31,6 @@ create index Users_score_index
 
 create index Users_username_score_index
     on User (username asc, score desc);
+
+
 
